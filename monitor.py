@@ -127,9 +127,9 @@ def is_first_run(stored_versions, watchlist):
     # Check if all watched tools have stored versions
     for tool in watchlist:
         if tool["id"] not in stored_versions:
-            return False
+            return True
 
-    return len(stored_versions) == 0
+    return False
 
 
 def format_timestamp_gmt8(iso_timestamp):
