@@ -1,0 +1,6 @@
+[
+  { "id": "gemini-cli",     "owner": "google-gemini",  "repo": "gemini-cli",     "emoji": "🟦" },
+  { "id": "qwen-code",      "owner": "QwenLM",         "repo": "qwen-code",      "emoji": "🟧" },
+  { "id": "opencode",       "owner": "anomalyco",      "repo": "opencode",       "emoji": "🟩" },
+  { "id": "oh-my-opencode", "owner": "code-yeongyu",  "repo": "oh-my-opencode", "emoji": "🟥" }
+]
