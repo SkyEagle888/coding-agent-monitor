@@ -1,6 +1,6 @@
 # 📦 AI Coding Tools Release Tracker
 
-*Last updated: 2026-02-26 11:55:57 HKT*
+*Last updated: 2026-02-26 12:28:25 HKT*
 
 | Tool | Current Version | Release Date | Link |
 |------|-----------------|--------------|------|
