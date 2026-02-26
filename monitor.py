@@ -25,6 +25,7 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 VERSIONS_FILE = SCRIPT_DIR / "versions.json"
 RELEASES_FILE = SCRIPT_DIR / "RELEASES.md"
 CHANGELOG_FILE = SCRIPT_DIR / "CHANGELOG.md"
+FAILURES_FILE = SCRIPT_DIR / ".fetch_failures.json"
 WATCHLIST_FILE = SCRIPT_DIR / "watchlist.json"
 
 # Timezone for display
@@ -42,7 +43,7 @@ def fetch_latest_release(owner, repo):
     Fetch the latest release info from GitHub API.
 
     Returns dict with tag_name, name, published_at, html_url, body
-    or None on error.
+    or error dict on failure.
     """
     url = f"{GITHUB_API_BASE}/{owner}/{repo}/releases/latest"
     headers = {"Accept": "application/vnd.github+json"}
@@ -88,30 +89,23 @@ def save_versions(versions):
         f.write("\n")
 
 
-def load_changelog():
-    """Load existing changelog entries."""
-    if not CHANGELOG_FILE.exists():
-        return []
+def load_fetch_failures():
+    """Load fetch failure tracking data."""
+    if not FAILURES_FILE.exists():
+        return {}
 
-    entries = []
     try:
-        with open(CHANGELOG_FILE, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            for line in lines:
-                line = line.strip()
-                if line.startswith("|") and not line.startswith("|---"):
-                    parts = line.split("|")
-                    if len(parts) >= 5:
-                        entries.append({
-                            "date": parts[1].strip(),
-                            "tool": parts[2].strip(),
-                            "old_version": parts[3].strip(),
-                            "new_version": parts[4].strip(),
-                        })
-    except (IOError, IndexError):
-        pass
+        with open(FAILURES_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return {}
 
-    return entries
+
+def save_fetch_failures(failures):
+    """Save fetch failure tracking data."""
+    with open(FAILURES_FILE, "w", encoding="utf-8") as f:
+        json.dump(failures, f, indent=2)
+        f.write("\n")
 
 
 def append_changelog_entry(tool_id, old_tag, new_tag, date_str):
@@ -208,9 +202,6 @@ def build_alert_message(tool, old_tag, new_release):
     published_at = format_timestamp_gmt8(new_release.get("published_at", ""))
     html_url = new_release.get("html_url", "")
 
-    # Get old release name if available
-    old_name = tool.get("_old_name", "Unknown")
-
     # Truncate release notes
     body = new_release.get("body", "")
     if len(body) > RELEASE_NOTES_TRUNCATE:
@@ -300,8 +291,6 @@ def build_changes_message(watchlist, changes, fetch_failures):
 
     for tool_id, old_tag, new_release in changes:
         tool = next(t for t in watchlist if t["id"] == tool_id)
-        # Store old release name for reference
-        tool["_old_name"] = stored_versions.get(tool_id, {}).get("name", "Unknown")
         messages.append(build_alert_message(tool, old_tag, new_release))
 
     base_message = "\n\n".join(messages)
@@ -354,12 +343,20 @@ def send_discord_message(content):
             print(f"Error sending Discord message: {e}", file=sys.stderr)
 
 
-def update_markdown(watchlist, fetched_versions):
-    """Generate RELEASES.md with current versions table."""
+def update_markdown(watchlist, fetched_versions, workflow_status="unknown"):
+    """Generate RELEASES.md with current versions table and status badge."""
     now_hkt = datetime.now(TZ_HKT).strftime("%Y-%m-%d %H:%M:%S HKT")
+
+    # Build status badge
+    if workflow_status == "success":
+        badge = "![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main&event=schedule)"
+    else:
+        badge = "![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main)"
 
     lines = [
         "# 📦 AI Coding Tools Release Tracker",
+        "",
+        badge,
         "",
         f"*Last updated: {now_hkt}*",
         "",
@@ -395,9 +392,74 @@ def update_markdown(watchlist, fetched_versions):
     return content
 
 
+def get_issue_title(tool_id, error_msg):
+    """Generate issue title for fetch failure."""
+    return f"⚠️ Fetch failure: {tool_id}"
+
+
+def output_issue_data(fetch_failures, fetched_versions, failure_history):
+    """Output data for GitHub issue creation via workflow."""
+    issues_to_create = []
+
+    for tool_id in fetch_failures:
+        # Get consecutive failure count
+        failure_count = failure_history.get(tool_id, {}).get("count", 1)
+
+        # Only create issue if 2+ consecutive failures
+        if failure_count >= 2:
+            error_msg = fetched_versions.get(tool_id, {}).get("error", "Unknown error")
+            issues_to_create.append({
+                "tool_id": tool_id,
+                "title": get_issue_title(tool_id, error_msg),
+                "body": f"""## Fetch Failure Alert
+
+**Tool:** {tool_id}
+**Consecutive Failures:** {failure_count}
+**Error:** {error_msg}
+
+### Suggested Actions
+- Check if the repository has been renamed or moved
+- Verify the repository still exists
+- Update `watchlist.json` if the owner/repo has changed
+
+---
+*This issue was auto-created by the Coding Agent Monitor workflow.*
+""",
+                "labels": ["bug", "fetch-failure"],
+            })
+
+    # Output as JSON for workflow to consume
+    if issues_to_create:
+        with open("/tmp/issues_to_create.json", "w") as f:
+            json.dump(issues_to_create, f)
+        print(f"ISSUES_TO_CREATE={json.dumps(issues_to_create)}")
+
+    return issues_to_create
+
+
+def update_failure_history(fetch_failures, all_failures_cleared):
+    """Update failure tracking history."""
+    failure_history = load_fetch_failures()
+    now = datetime.now(TZ_HKT).isoformat()
+
+    for tool_id in fetch_failures:
+        if tool_id not in failure_history:
+            failure_history[tool_id] = {"count": 1, "first_failure": now, "last_error": ""}
+        else:
+            failure_history[tool_id]["count"] += 1
+            failure_history[tool_id]["last_error"] = ""
+
+    # Clear failures for tools that succeeded
+    for tool_id in list(failure_history.keys()):
+        if tool_id not in fetch_failures:
+            del failure_history[tool_id]
+
+    save_fetch_failures(failure_history)
+    return failure_history
+
+
 def main():
     """Main entry point."""
-    global stored_versions  # Needed for build_changes_message
     print("Starting Coding Agent Monitor...")
 
     # Load configuration
@@ -425,6 +487,10 @@ def main():
     # Detect changes and fetch failures
     changes, fetch_failures = detect_changes(watchlist, fetched_versions, stored_versions)
     first_run = is_first_run(stored_versions, watchlist)
+
+    # Update failure history and get issues to create
+    failure_history = update_failure_history(fetch_failures, not fetch_failures)
+    issues_to_create = output_issue_data(fetch_failures, fetched_versions, failure_history)
 
     # Build and send appropriate message
     if first_run:

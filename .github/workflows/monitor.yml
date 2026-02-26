@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   monitor:
@@ -33,15 +34,55 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: python monitor.py
+        id: monitor
+
+      - name: Create issues for consecutive fetch failures
+        uses: actions/github-script@v7
+        if: always()
+        env:
+          ISSUES_DATA: ${{ steps.monitor.outputs.issues }}
+        with:
+          script: |
+            const fs = require('fs');
+            const issuesFile = '/tmp/issues_to_create.json';
+
+            if (fs.existsSync(issuesFile)) {
+              const issues = JSON.parse(fs.readFileSync(issuesFile, 'utf8'));
+
+              // Get existing open issues
+              const { data: existingIssues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: 'fetch-failure'
+              });
+
+              for (const issue of issues) {
+                // Check if issue already exists
+                const existing = existingIssues.find(i => i.title === issue.title);
+                if (!existing) {
+                  await github.rest.issues.create({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    title: issue.title,
+                    body: issue.body,
+                    labels: issue.labels
+                  });
+                  console.log(`Created issue: ${issue.title}`);
+                } else {
+                  console.log(`Issue already exists: ${issue.title}`);
+                }
+              }
+            }
 
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add versions.json RELEASES.md
+          git add versions.json RELEASES.md CHANGELOG.md .fetch_failures.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "[skip ci] Update versions and releases"
+            git commit -m "[skip ci] Update versions, releases, and changelog"
             git push
           fi
