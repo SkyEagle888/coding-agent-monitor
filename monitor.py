@@ -24,6 +24,7 @@ RELEASE_NOTES_TRUNCATE = 800
 SCRIPT_DIR = Path(__file__).parent.resolve()
 VERSIONS_FILE = SCRIPT_DIR / "versions.json"
 RELEASES_FILE = SCRIPT_DIR / "RELEASES.md"
+CHANGELOG_FILE = SCRIPT_DIR / "CHANGELOG.md"
 WATCHLIST_FILE = SCRIPT_DIR / "watchlist.json"
 
 # Timezone for display
@@ -65,7 +66,7 @@ def fetch_latest_release(owner, repo):
         }
     except requests.exceptions.RequestException as e:
         print(f"Error fetching {owner}/{repo}: {e}", file=sys.stderr)
-        return None
+        return {"error": str(e)}
 
 
 def load_versions():
@@ -87,13 +88,58 @@ def save_versions(versions):
         f.write("\n")
 
 
+def load_changelog():
+    """Load existing changelog entries."""
+    if not CHANGELOG_FILE.exists():
+        return []
+
+    entries = []
+    try:
+        with open(CHANGELOG_FILE, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                if line.startswith("|") and not line.startswith("|---"):
+                    parts = line.split("|")
+                    if len(parts) >= 5:
+                        entries.append({
+                            "date": parts[1].strip(),
+                            "tool": parts[2].strip(),
+                            "old_version": parts[3].strip(),
+                            "new_version": parts[4].strip(),
+                        })
+    except (IOError, IndexError):
+        pass
+
+    return entries
+
+
+def append_changelog_entry(tool_id, old_tag, new_tag, date_str):
+    """Append a new entry to CHANGELOG.md."""
+    today = datetime.now(TZ_HKT).strftime("%Y-%m-%d") if not date_str else date_str[:10]
+
+    # Create file with header if it doesn't exist
+    if not CHANGELOG_FILE.exists():
+        with open(CHANGELOG_FILE, "w", encoding="utf-8") as f:
+            f.write("# 📝 Version History\n\n")
+            f.write("| Date | Tool | Change | Details |\n")
+            f.write("|------|------|--------|--------|\n")
+
+    # Append new entry
+    with open(CHANGELOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"| {today} | {tool_id} | `{old_tag}` → `{new_tag}` | [Release](https://github.com/search?q={tool_id}+releases) |\n")
+
+
 def detect_changes(watchlist, fetched_versions, stored_versions):
     """
     Compare fetched versions against stored versions.
 
-    Returns list of (tool_id, old_tag, new_release_data) tuples.
+    Returns tuple of (changes, fetch_failures) where:
+    - changes: list of (tool_id, old_tag, new_release_data) tuples
+    - fetch_failures: list of tool_ids that failed to fetch
     """
     changes = []
+    fetch_failures = []
 
     for tool in watchlist:
         tool_id = tool["id"]
@@ -101,6 +147,12 @@ def detect_changes(watchlist, fetched_versions, stored_versions):
             continue
 
         fetched = fetched_versions[tool_id]
+
+        # Check for fetch error
+        if "error" in fetched:
+            fetch_failures.append(tool_id)
+            continue
+
         stored = stored_versions.get(tool_id, {})
 
         old_tag = stored.get("tag", None)
@@ -116,7 +168,7 @@ def detect_changes(watchlist, fetched_versions, stored_versions):
 
         changes.append((tool_id, old_tag, fetched))
 
-    return changes
+    return changes, fetch_failures
 
 
 def is_first_run(stored_versions, watchlist):
@@ -156,6 +208,9 @@ def build_alert_message(tool, old_tag, new_release):
     published_at = format_timestamp_gmt8(new_release.get("published_at", ""))
     html_url = new_release.get("html_url", "")
 
+    # Get old release name if available
+    old_name = tool.get("_old_name", "Unknown")
+
     # Truncate release notes
     body = new_release.get("body", "")
     if len(body) > RELEASE_NOTES_TRUNCATE:
@@ -179,7 +234,7 @@ def build_alert_message(tool, old_tag, new_release):
     return "\n".join(lines)
 
 
-def build_status_message(watchlist, fetched_versions):
+def build_status_message(watchlist, fetched_versions, fetch_failures):
     """Build quiet daily status message when no changes detected."""
     lines = ["📊 **Daily Status Report**", ""]
 
@@ -187,10 +242,20 @@ def build_status_message(watchlist, fetched_versions):
         tool_id = tool["id"]
         emoji = tool.get("emoji", "📦")
         fetched = fetched_versions.get(tool_id, {})
-        tag = fetched.get("tag_name", "unknown")
-        published = format_timestamp_gmt8(fetched.get("published_at", ""))
 
-        lines.append(f"{emoji} **{tool_id}**: `{tag}` ({published})")
+        if "error" in fetched:
+            lines.append(f"{emoji} **{tool_id}**: ⚠️ Fetch failed - {fetched.get('error', 'Unknown error')}")
+        else:
+            tag = fetched.get("tag_name", "unknown")
+            published = format_timestamp_gmt8(fetched.get("published_at", ""))
+            lines.append(f"{emoji} **{tool_id}**: `{tag}` ({published})")
+
+    # Add fetch failure warning section
+    if fetch_failures:
+        lines.append("")
+        lines.append("⚠️ **Fetch Failures:**")
+        for tool_id in fetch_failures:
+            lines.append(f"- {tool_id}: Unable to fetch release data")
 
     lines.append("")
     lines.append("No new releases detected today.")
@@ -198,7 +263,7 @@ def build_status_message(watchlist, fetched_versions):
     return "\n".join(lines)
 
 
-def build_initial_message(watchlist, fetched_versions):
+def build_initial_message(watchlist, fetched_versions, fetch_failures):
     """Build first-run setup confirmation message."""
     lines = ["✅ **Monitor Initialized**", ""]
     lines.append("Now tracking the following tools:")
@@ -208,15 +273,47 @@ def build_initial_message(watchlist, fetched_versions):
         tool_id = tool["id"]
         emoji = tool.get("emoji", "📦")
         fetched = fetched_versions.get(tool_id, {})
-        tag = fetched.get("tag_name", "unknown")
-        published = format_timestamp_gmt8(fetched.get("published_at", ""))
 
-        lines.append(f"{emoji} **{tool_id}**: `{tag}` (since {published})")
+        if "error" in fetched:
+            lines.append(f"{emoji} **{tool_id}**: ⚠️ Fetch failed - {fetched.get('error', 'Unknown error')}")
+        else:
+            tag = fetched.get("tag_name", "unknown")
+            published = format_timestamp_gmt8(fetched.get("published_at", ""))
+            lines.append(f"{emoji} **{tool_id}**: `{tag}` (since {published})")
+
+    # Add fetch failure warning section
+    if fetch_failures:
+        lines.append("")
+        lines.append("⚠️ **Fetch Failures:**")
+        for tool_id in fetch_failures:
+            lines.append(f"- {tool_id}: Unable to fetch release data")
 
     lines.append("")
     lines.append("You will be notified when new releases are published.")
 
     return "\n".join(lines)
+
+
+def build_changes_message(watchlist, changes, fetch_failures):
+    """Build Discord message for detected changes."""
+    messages = []
+
+    for tool_id, old_tag, new_release in changes:
+        tool = next(t for t in watchlist if t["id"] == tool_id)
+        # Store old release name for reference
+        tool["_old_name"] = stored_versions.get(tool_id, {}).get("name", "Unknown")
+        messages.append(build_alert_message(tool, old_tag, new_release))
+
+    base_message = "\n\n".join(messages)
+
+    # Append fetch failure warnings if any
+    if fetch_failures:
+        failure_lines = ["", "⚠️ **Fetch Failures:**"]
+        for tool_id in fetch_failures:
+            failure_lines.append(f"- {tool_id}: Unable to fetch release data")
+        base_message += "\n\n" + "\n".join(failure_lines)
+
+    return base_message
 
 
 def send_discord_message(content):
@@ -274,14 +371,19 @@ def update_markdown(watchlist, fetched_versions):
         tool_id = tool["id"]
         emoji = tool.get("emoji", "📦")
         fetched = fetched_versions.get(tool_id, {})
-        tag = fetched.get("tag_name", "unknown")
-        published = format_timestamp_gmt8(fetched.get("published_at", ""))
-        html_url = fetched.get("html_url", "")
 
-        display_name = f"{emoji} {tool_id}"
-        link_display = f"[Release]({html_url})" if html_url else "N/A"
+        if "error" in fetched:
+            display_name = f"{emoji} {tool_id}"
+            lines.append(f"| {display_name} | ⚠️ Error | - | - |")
+        else:
+            tag = fetched.get("tag_name", "unknown")
+            published = format_timestamp_gmt8(fetched.get("published_at", ""))
+            html_url = fetched.get("html_url", "")
 
-        lines.append(f"| {display_name} | `{tag}` | {published} | {link_display} |")
+            display_name = f"{emoji} {tool_id}"
+            link_display = f"[Release]({html_url})" if html_url else "N/A"
+
+            lines.append(f"| {display_name} | `{tag}` | {published} | {link_display} |")
 
     lines.append("")
 
@@ -295,6 +397,7 @@ def update_markdown(watchlist, fetched_versions):
 
 def main():
     """Main entry point."""
+    global stored_versions  # Needed for build_changes_message
     print("Starting Coding Agent Monitor...")
 
     # Load configuration
@@ -306,31 +409,32 @@ def main():
     for tool in watchlist:
         owner, repo = tool["owner"], tool["repo"]
         release = fetch_latest_release(owner, repo)
-        if release:
-            fetched_versions[tool["id"]] = release
-            print(f"Fetched {tool['id']}: {release['tag_name']}")
+        fetched_versions[tool["id"]] = release
 
-    if not fetched_versions:
+        if release and "error" not in release:
+            print(f"Fetched {tool['id']}: {release['tag_name']}")
+        elif release and "error" in release:
+            print(f"Failed to fetch {tool['id']}: {release['error']}", file=sys.stderr)
+
+    # Check if all fetches failed
+    successful_fetches = {k: v for k, v in fetched_versions.items() if v and "error" not in v}
+    if not successful_fetches:
         print("Error: Failed to fetch any releases", file=sys.stderr)
         sys.exit(1)
 
-    # Detect changes
-    changes = detect_changes(watchlist, fetched_versions, stored_versions)
+    # Detect changes and fetch failures
+    changes, fetch_failures = detect_changes(watchlist, fetched_versions, stored_versions)
     first_run = is_first_run(stored_versions, watchlist)
 
     # Build and send appropriate message
     if first_run:
-        message = build_initial_message(watchlist, fetched_versions)
+        message = build_initial_message(watchlist, fetched_versions, fetch_failures)
         print("First run detected, sending initialization message")
     elif changes:
         print(f"Detected {len(changes)} new release(s)")
-        messages = []
-        for tool_id, old_tag, new_release in changes:
-            tool = next(t for t in watchlist if t["id"] == tool_id)
-            messages.append(build_alert_message(tool, old_tag, new_release))
-        message = "\n\n".join(messages)
+        message = build_changes_message(watchlist, changes, fetch_failures)
     else:
-        message = build_status_message(watchlist, fetched_versions)
+        message = build_status_message(watchlist, fetched_versions, fetch_failures)
         print("No changes detected")
 
     # Send to Discord
@@ -342,15 +446,23 @@ def main():
         tool_id = tool["id"]
         if tool_id in fetched_versions:
             release = fetched_versions[tool_id]
-            new_versions[tool_id] = {
-                "tag": release["tag_name"],
-                "published_at": release["published_at"],
-            }
+            if release and "error" not in release:
+                new_versions[tool_id] = {
+                    "tag": release["tag_name"],
+                    "name": release["name"],
+                    "published_at": release["published_at"],
+                }
 
     # Only save if versions changed or first run
     if first_run or new_versions != stored_versions:
         save_versions(new_versions)
         print("Updated versions.json")
+
+        # Update changelog for each changed tool
+        for tool_id, old_tag, new_release in changes:
+            new_tag = new_release.get("tag_name")
+            append_changelog_entry(tool_id, old_tag, new_tag, new_release.get("published_at", ""))
+        print("Updated CHANGELOG.md")
 
     # Always update RELEASES.md
     update_markdown(watchlist, fetched_versions)
