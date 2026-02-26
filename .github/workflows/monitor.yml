@@ -2,8 +2,8 @@ name: Coding Agent Monitor
 
 on:
   schedule:
-    # Daily at 01:00 UTC (09:00 HKT)
-    - cron: '0 1 * * *'
+    # Daily at 01:37 UTC (09:37 HKT) — offset to avoid GitHub scheduler peak load at :00
+    - cron: '37 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -12,6 +12,7 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
