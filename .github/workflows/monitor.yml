@@ -2,8 +2,8 @@ name: Coding Agent Monitor
 
 on:
   schedule:
-    # Daily at 01:37 UTC (09:37 HKT) — offset to avoid GitHub scheduler peak load at :00
-    - cron: '37 1 * * *'
+    # Daily at 02:15 UTC (10:15 HKT) — for testing schedule trigger
+    - cron: '15 2 * * *'
   workflow_dispatch:
 
 permissions:
