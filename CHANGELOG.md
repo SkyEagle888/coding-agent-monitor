@@ -10,3 +10,4 @@
 | 2026-03-04 | gemini-cli | `v0.31.0` → `v0.32.1` | [Release](https://github.com/search?q=gemini-cli+releases) |
 | 2026-03-03 | qwen-code | `v0.11.0` → `v0.11.1` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-03-03 | opencode | `v1.2.15` → `v1.2.16` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-03-04 | opencode | `v1.2.16` → `v1.2.17` | [Release](https://github.com/search?q=opencode+releases) |
