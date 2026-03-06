@@ -2,11 +2,11 @@
 
 ![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main)
 
-*Last updated: 2026-03-05 12:20:16 HKT*
+*Last updated: 2026-03-06 12:17:19 HKT*
 
 | Tool | Current Version | Release Date | Link |
 |------|-----------------|--------------|------|
 | 🟦 gemini-cli | `v0.32.1` | 2026-03-04 11:46:12 HKT | [Release](https://github.com/google-gemini/gemini-cli/releases/tag/v0.32.1) |
 | 🟧 qwen-code | `v0.11.1` | 2026-03-03 21:08:44 HKT | [Release](https://github.com/QwenLM/qwen-code/releases/tag/v0.11.1) |
-| 🟩 opencode | `v1.2.17` | 2026-03-04 22:58:43 HKT | [Release](https://github.com/anomalyco/opencode/releases/tag/v1.2.17) |
+| 🟩 opencode | `v1.2.18` | 2026-03-06 03:01:30 HKT | [Release](https://github.com/anomalyco/opencode/releases/tag/v1.2.18) |
 | 🟥 oh-my-opencode | `v3.10.0` | 2026-03-02 14:28:37 HKT | [Release](https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v3.10.0) |
