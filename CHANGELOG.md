@@ -13,3 +13,5 @@
 | 2026-03-04 | opencode | `v1.2.16` → `v1.2.17` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-03-05 | opencode | `v1.2.17` → `v1.2.18` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-03-06 | opencode | `v1.2.18` → `v1.2.20` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-03-07 | opencode | `v1.2.20` → `v1.2.21` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-03-07 | oh-my-opencode | `v3.10.0` → `v3.11.1` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
