@@ -1,13 +1,13 @@
 {
   "gemini-cli": {
-    "tag": "v0.33.1",
-    "name": "Release v0.33.1",
-    "published_at": "2026-03-12T22:20:34Z"
+    "tag": "v0.33.2",
+    "name": "Release v0.33.2",
+    "published_at": "2026-03-16T20:34:15Z"
   },
   "qwen-code": {
-    "tag": "v0.12.3",
-    "name": "Release v0.12.3",
-    "published_at": "2026-03-13T12:49:43Z"
+    "tag": "v0.12.5",
+    "name": "Release v0.12.5",
+    "published_at": "2026-03-16T15:38:58Z"
   },
   "opencode": {
     "tag": "v1.2.27",
