@@ -32,3 +32,4 @@
 | 2026-03-17 | gemini-cli | `v0.33.2` → `v0.34.0` | [Release](https://github.com/search?q=gemini-cli+releases) |
 | 2026-03-17 | qwen-code | `v0.12.5` → `v0.12.6` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-03-18 | oh-my-opencode | `v3.11.2` → `v3.12.1` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
+| 2026-03-18 | oh-my-opencode | `v3.12.1` → `v3.12.3` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
