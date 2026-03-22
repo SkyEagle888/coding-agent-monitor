@@ -78,6 +78,10 @@ def load_versions():
     Handles backward compatibility: converts old format (single version per tool)
     to new format (version history list with up to MAX_VERSION_HISTORY entries).
     
+    Returns tuple of (versions_dict, needs_save) where:
+    - versions_dict: The loaded/converted versions data
+    - needs_save: True if old format was converted and should be saved
+    
     New format:
     {
         "tool_id": {
@@ -89,16 +93,18 @@ def load_versions():
     }
     """
     if not VERSIONS_FILE.exists():
-        return {}
+        return {}, False
 
     try:
         with open(VERSIONS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, IOError):
-        return {}
+        return {}, False
 
     # Convert old format to new format for backward compatibility
     converted = {}
+    needs_save = False
+    
     for tool_id, tool_data in data.items():
         if isinstance(tool_data, dict) and "versions" in tool_data:
             # Already in new format
@@ -115,11 +121,12 @@ def load_versions():
                     }
                 ]
             }
+            needs_save = True  # Mark that conversion happened
         else:
             # Unknown format, skip
             print(f"Warning: Skipping unknown format for {tool_id}", file=sys.stderr)
 
-    return converted
+    return converted, needs_save
 
 
 def save_versions(versions):
@@ -556,7 +563,7 @@ def main():
 
     # Load configuration
     watchlist = load_watchlist()
-    stored_versions = load_versions()
+    stored_versions, format_converted = load_versions()
 
     # Fetch latest releases
     fetched_versions = {}
@@ -598,26 +605,30 @@ def main():
     # Send to Discord
     send_discord_message(message)
 
-    # Update versions.json with version history (only if changed or first run)
+    # Update versions.json with version history
+    # Save if: first run, new versions detected, or format conversion needed
     versions_changed = first_run or bool(changes)
-    
-    if versions_changed:
+    needs_save = versions_changed or format_converted
+
+    if needs_save:
         # Update version history for each tool with successful fetch
-        for tool in watchlist:
-            tool_id = tool["id"]
-            if tool_id in fetched_versions:
-                release = fetched_versions[tool_id]
-                if release and "error" not in release:
-                    update_version_history(stored_versions, tool_id, release)
-        
+        if versions_changed:
+            for tool in watchlist:
+                tool_id = tool["id"]
+                if tool_id in fetched_versions:
+                    release = fetched_versions[tool_id]
+                    if release and "error" not in release:
+                        update_version_history(stored_versions, tool_id, release)
+
         save_versions(stored_versions)
         print("Updated versions.json")
 
         # Update changelog for each changed tool
-        for tool_id, old_tag, new_release in changes:
-            new_tag = new_release.get("tag_name")
-            append_changelog_entry(tool_id, old_tag, new_tag, new_release.get("published_at", ""))
-        print("Updated CHANGELOG.md")
+        if changes:
+            for tool_id, old_tag, new_release in changes:
+                new_tag = new_release.get("tag_name")
+                append_changelog_entry(tool_id, old_tag, new_tag, new_release.get("published_at", ""))
+            print("Updated CHANGELOG.md")
 
     # Always update RELEASES.md
     update_markdown(watchlist, fetched_versions)
