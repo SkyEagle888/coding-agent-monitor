@@ -9,6 +9,7 @@ GitHub Actions monitor that tracks new releases of AI coding CLI tools (Gemini C
 - 🔄 **Automated Monitoring** - Checks for new releases daily at 01:00 UTC (09:00 HKT)
 - 📬 **Discord Notifications** - Instant alerts when new versions are published
 - 📊 **Release Tracker** - Maintains a human-readable `RELEASES.md` with current versions
+- 📜 **Version History** - Stores up to 5 previous versions per tool with full release notes
 - 🔧 **Configurable** - Easy to extend with additional tools via `watchlist.json`
 - 💰 **Free Tier Friendly** - Runs entirely on GitHub Actions free tier
 
@@ -33,8 +34,9 @@ coding-agent-monitor/
 │   └── IMPLEMENTATION_PLAN.md    # Implementation checklist
 ├── monitor.py                    # Main Python monitor script
 ├── watchlist.json                # Configurable list of repos to watch
-├── versions.json                 # Persisted latest versions (auto-updated)
+├── versions.json                 # Persisted version history (auto-updated, max 5 versions per tool)
 ├── RELEASES.md                   # Human-readable release table (auto-updated)
+├── CHANGELOG.md                  # Version change history log (auto-updated)
 ├── requirements.txt              # Python dependencies
 └── README.md                     # This file
 ```
@@ -102,6 +104,40 @@ schedule:
 ```
 
 Use [crontab.guru](https://crontab.guru/) to generate cron expressions.
+
+## Data Formats
+
+### versions.json
+
+The `versions.json` file stores version history for each tracked tool. It maintains up to 5 previous versions with full release notes:
+
+```json
+{
+  "tool-id": {
+    "versions": [
+      {
+        "tag": "v1.2.0",
+        "name": "Release v1.2.0",
+        "published_at": "2026-03-20T12:00:00Z",
+        "body": "Full release notes from GitHub..."
+      },
+      {
+        "tag": "v1.1.0",
+        "name": "Release v1.1.0",
+        "published_at": "2026-03-15T10:00:00Z",
+        "body": "Previous release notes..."
+      }
+    ]
+  }
+}
+```
+
+**Notes:**
+- Versions are ordered newest first (index 0 is the latest)
+- Maximum 5 versions are retained per tool
+- When a new version is detected, the oldest is automatically removed
+- The `body` field contains the full release notes from GitHub
+- Backward compatible: old format (single version per tool) is automatically converted on first run
 
 ## Dependencies
 

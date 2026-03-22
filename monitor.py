@@ -21,6 +21,7 @@ GITHUB_API_BASE = "https://api.github.com/repos"
 DISCORD_MAX_LENGTH = 2000
 DISCORD_SPLIT_MARGIN = 100  # Leave room for safety
 RELEASE_NOTES_TRUNCATE = 800
+MAX_VERSION_HISTORY = 5  # Maximum number of previous versions to store per tool
 SCRIPT_DIR = Path(__file__).parent.resolve()
 VERSIONS_FILE = SCRIPT_DIR / "versions.json"
 RELEASES_FILE = SCRIPT_DIR / "RELEASES.md"
@@ -71,15 +72,54 @@ def fetch_latest_release(owner, repo):
 
 
 def load_versions():
-    """Load persisted versions from versions.json."""
+    """
+    Load persisted versions from versions.json.
+    
+    Handles backward compatibility: converts old format (single version per tool)
+    to new format (version history list with up to MAX_VERSION_HISTORY entries).
+    
+    New format:
+    {
+        "tool_id": {
+            "versions": [
+                {"tag": "v1.0.0", "name": "...", "published_at": "...", "body": "..."},
+                ...
+            ]
+        }
+    }
+    """
     if not VERSIONS_FILE.exists():
         return {}
 
     try:
         with open(VERSIONS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
     except (json.JSONDecodeError, IOError):
         return {}
+
+    # Convert old format to new format for backward compatibility
+    converted = {}
+    for tool_id, tool_data in data.items():
+        if isinstance(tool_data, dict) and "versions" in tool_data:
+            # Already in new format
+            converted[tool_id] = tool_data
+        elif isinstance(tool_data, dict) and "tag" in tool_data:
+            # Old format: convert to new format with single version in history
+            converted[tool_id] = {
+                "versions": [
+                    {
+                        "tag": tool_data.get("tag", "unknown"),
+                        "name": tool_data.get("name", "unknown"),
+                        "published_at": tool_data.get("published_at", ""),
+                        "body": tool_data.get("body", ""),  # May be empty in old format
+                    }
+                ]
+            }
+        else:
+            # Unknown format, skip
+            print(f"Warning: Skipping unknown format for {tool_id}", file=sys.stderr)
+
+    return converted
 
 
 def save_versions(versions):
@@ -131,6 +171,8 @@ def detect_changes(watchlist, fetched_versions, stored_versions):
     Returns tuple of (changes, fetch_failures) where:
     - changes: list of (tool_id, old_tag, new_release_data) tuples
     - fetch_failures: list of tool_ids that failed to fetch
+    
+    Uses the most recent version from the version history for comparison.
     """
     changes = []
     fetch_failures = []
@@ -148,8 +190,11 @@ def detect_changes(watchlist, fetched_versions, stored_versions):
             continue
 
         stored = stored_versions.get(tool_id, {})
-
-        old_tag = stored.get("tag", None)
+        
+        # Get the most recent version from history for comparison
+        stored_version_list = stored.get("versions", [])
+        old_tag = stored_version_list[0]["tag"] if stored_version_list else None
+        
         new_tag = fetched.get("tag_name")
 
         # Skip if no change
@@ -170,9 +215,13 @@ def is_first_run(stored_versions, watchlist):
     if not stored_versions:
         return True
 
-    # Check if all watched tools have stored versions
+    # Check if all watched tools have stored versions with at least one entry
     for tool in watchlist:
-        if tool["id"] not in stored_versions:
+        tool_id = tool["id"]
+        if tool_id not in stored_versions:
+            return True
+        stored = stored_versions.get(tool_id, {})
+        if not stored.get("versions"):
             return True
 
     return False
@@ -458,6 +507,49 @@ def update_failure_history(fetch_failures, all_failures_cleared):
     return failure_history
 
 
+def update_version_history(stored_versions, tool_id, new_release):
+    """
+    Update the version history for a tool with a new release.
+    
+    Maintains a maximum of MAX_VERSION_HISTORY versions, with the newest first.
+    When a new version is detected, it's prepended to the list and the oldest
+    is removed if the list exceeds the maximum.
+    
+    Args:
+        stored_versions: The current versions dict (modified in place)
+        tool_id: The tool identifier
+        new_release: The new release data from GitHub API
+    """
+    if tool_id not in stored_versions:
+        stored_versions[tool_id] = {"versions": []}
+    
+    version_list = stored_versions[tool_id]["versions"]
+    
+    # Create new version entry with all required fields
+    new_version = {
+        "tag": new_release["tag_name"],
+        "name": new_release["name"],
+        "published_at": new_release["published_at"],
+        "body": new_release.get("body", ""),  # Store full release notes
+    }
+    
+    # Check if this version already exists (avoid duplicates)
+    existing_tags = [v["tag"] for v in version_list]
+    if new_version["tag"] in existing_tags:
+        # Version already in history, move to front if not already there
+        if version_list and version_list[0]["tag"] != new_version["tag"]:
+            version_list.remove(new_version)
+            version_list.insert(0, new_version)
+        return
+    
+    # Prepend new version (newest first)
+    version_list.insert(0, new_version)
+    
+    # Trim to maximum history size
+    while len(version_list) > MAX_VERSION_HISTORY:
+        version_list.pop()
+
+
 def main():
     """Main entry point."""
     print("Starting Coding Agent Monitor...")
@@ -506,22 +598,19 @@ def main():
     # Send to Discord
     send_discord_message(message)
 
-    # Update versions.json (only if changed or first run)
-    new_versions = {}
-    for tool in watchlist:
-        tool_id = tool["id"]
-        if tool_id in fetched_versions:
-            release = fetched_versions[tool_id]
-            if release and "error" not in release:
-                new_versions[tool_id] = {
-                    "tag": release["tag_name"],
-                    "name": release["name"],
-                    "published_at": release["published_at"],
-                }
-
-    # Only save if versions changed or first run
-    if first_run or new_versions != stored_versions:
-        save_versions(new_versions)
+    # Update versions.json with version history (only if changed or first run)
+    versions_changed = first_run or bool(changes)
+    
+    if versions_changed:
+        # Update version history for each tool with successful fetch
+        for tool in watchlist:
+            tool_id = tool["id"]
+            if tool_id in fetched_versions:
+                release = fetched_versions[tool_id]
+                if release and "error" not in release:
+                    update_version_history(stored_versions, tool_id, release)
+        
+        save_versions(stored_versions)
         print("Updated versions.json")
 
         # Update changelog for each changed tool
