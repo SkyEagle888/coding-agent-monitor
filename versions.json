@@ -1,22 +1,42 @@
 {
   "gemini-cli": {
-    "tag": "v0.34.0",
-    "name": "Release v0.34.0",
-    "published_at": "2026-03-17T21:03:59Z"
+    "versions": [
+      {
+        "tag": "v0.34.0",
+        "name": "Release v0.34.0",
+        "published_at": "2026-03-17T21:03:59Z",
+        "body": ""
+      }
+    ]
   },
   "qwen-code": {
-    "tag": "v0.12.6",
-    "name": "Release v0.12.6",
-    "published_at": "2026-03-17T11:55:27Z"
+    "versions": [
+      {
+        "tag": "v0.12.6",
+        "name": "Release v0.12.6",
+        "published_at": "2026-03-17T11:55:27Z",
+        "body": ""
+      }
+    ]
   },
   "opencode": {
-    "tag": "v1.2.27",
-    "name": "v1.2.27",
-    "published_at": "2026-03-16T02:34:10Z"
+    "versions": [
+      {
+        "tag": "v1.2.27",
+        "name": "v1.2.27",
+        "published_at": "2026-03-16T02:34:10Z",
+        "body": ""
+      }
+    ]
   },
   "oh-my-opencode": {
-    "tag": "v3.12.3",
-    "name": "v3.12.3",
-    "published_at": "2026-03-18T07:07:43Z"
+    "versions": [
+      {
+        "tag": "v3.12.3",
+        "name": "v3.12.3",
+        "published_at": "2026-03-18T07:07:43Z",
+        "body": ""
+      }
+    ]
   }
 }
