@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Agent Monitor Dashboard</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 mb-2">
+                        <i class="bi bi-activity"></i> Coding Agent Monitor
+                    </h1>
+                    <p class="lead mb-0">Track new releases of AI coding CLI tools</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="https://github.com/SkyEagle888/coding-agent-monitor" class="btn btn-outline-light btn-sm mb-2">
+                        <i class="bi bi-github"></i> View on GitHub
+                    </a>
+                    <div id="last-updated" class="text-light small">
+                        <i class="bi bi-clock"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <!-- Loading State -->
+        <div id="loading-spinner" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading version data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-message" class="alert alert-danger d-none" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span id="error-text"></span>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content" class="d-none">
+            <!-- Current Versions Cards -->
+            <section class="mb-5">
+                <h2 class="section-title mb-4">
+                    <i class="bi bi-box-seam"></i> Current Versions
+                </h2>
+                <div id="version-cards" class="row g-4">
+                    <!-- Cards will be inserted here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Version History Timeline -->
+            <section class="mb-5">
+                <h2 class="section-title mb-4">
+                    <i class="bi bi-graph-up-arrow"></i> Version History
+                </h2>
+                <div id="version-timeline">
+                    <!-- Timeline will be inserted here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Recent Changes Table -->
+            <section class="mb-5">
+                <h2 class="section-title mb-4">
+                    <i class="bi bi-list-ul"></i> Recent Changes
+                </h2>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Tool</th>
+                                <th>Change</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="changelog-body">
+                            <!-- Rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-1">
+                        <i class="bi bi-code-slash"></i> Coding Agent Monitor Dashboard
+                    </p>
+                    <p class="text-muted small mb-0">
+                        Monitoring Gemini CLI, Qwen Code, OpenCode, and Oh-My-OpenCode
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="../versions.json" class="text-decoration-none me-3" target="_blank">
+                        <i class="bi bi-file-earmark-json"></i> versions.json
+                    </a>
+                    <a href="../CHANGELOG.md" class="text-decoration-none me-3" target="_blank">
+                        <i class="bi bi-file-earmark-text"></i> CHANGELOG.md
+                    </a>
+                    <a href="../RELEASES.md" class="text-decoration-none" target="_blank">
+                        <i class="bi bi-file-earmark-richtext"></i> RELEASES.md
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script>
+        // Tool metadata (matches watchlist.json)
+        const TOOL_METADATA = {
+            'gemini-cli': {
+                name: 'Gemini CLI',
+                emoji: '🟦',
+                repo: 'https://github.com/google-gemini/gemini-cli'
+            },
+            'qwen-code': {
+                name: 'Qwen Code',
+                emoji: '🟧',
+                repo: 'https://github.com/QwenLM/qwen-code'
+            },
+            'opencode': {
+                name: 'OpenCode',
+                emoji: '🟩',
+                repo: 'https://github.com/anomalyco/opencode'
+            },
+            'oh-my-opencode': {
+                name: 'Oh-My-OpenCode',
+                emoji: '🟥',
+                repo: 'https://github.com/code-yeongyu/oh-my-opencode'
+            }
+        };
+
+        // Format timestamp to readable date
+        function formatDate(isoString) {
+            if (!isoString) return 'Unknown';
+            try {
+                const date = new Date(isoString);
+                return date.toLocaleDateString('en-HK', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZoneName: 'short'
+                });
+            } catch (e) {
+                return isoString;
+            }
+        }
+
+        // Format relative time (e.g., "2 days ago")
+        function formatRelativeTime(isoString) {
+            if (!isoString) return '';
+            try {
+                const date = new Date(isoString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+                if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+                return `${Math.floor(diffDays / 365)} years ago`;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        // Render version cards
+        function renderVersionCards(versions) {
+            const container = document.getElementById('version-cards');
+            const cards = [];
+
+            for (const [toolId, toolData] of Object.entries(versions)) {
+                const metadata = TOOL_METADATA[toolId] || { name: toolId, emoji: '📦', repo: '#' };
+                const versionsList = toolData.versions || [];
+                const latestVersion = versionsList[0];
+
+                if (!latestVersion) continue;
+
+                const card = `
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card version-card h-100" style="--tool-color: ${getToolColor(toolId)}">
+                            <div class="card-header" style="background-color: var(--tool-color); color: white;">
+                                <h5 class="card-title mb-0">${metadata.emoji} ${metadata.name}</h5>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Latest Version</h6>
+                                <p class="display-6 mb-2">${latestVersion.tag}</p>
+                                <p class="card-text mb-2">
+                                    <strong>${latestVersion.name}</strong>
+                                </p>
+                                <p class="small text-muted mb-3">
+                                    <i class="bi bi-clock"></i> ${formatDate(latestVersion.published_at)}
+                                </p>
+                                <a href="${metadata.repo}/releases" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-box"></i> View Releases
+                                </a>
+                            </div>
+                            <div class="card-footer text-muted small">
+                                <i class="bi bi-graph-up"></i> ${versionsList.length} version(s) tracked
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cards.push(card);
+            }
+
+            container.innerHTML = cards.join('');
+        }
+
+        // Get tool color based on emoji
+        function getToolColor(toolId) {
+            const colors = {
+                'gemini-cli': '#4285f4',
+                'qwen-code': '#ff6b35',
+                'opencode': '#34c759',
+                'oh-my-opencode': '#ff3b30'
+            };
+            return colors[toolId] || '#6c757d';
+        }
+
+        // Render version timeline
+        function renderVersionTimeline(versions) {
+            const container = document.getElementById('version-timeline');
+            const timelineItems = [];
+
+            // Collect all versions with tool info
+            const allVersions = [];
+            for (const [toolId, toolData] of Object.entries(versions)) {
+                const metadata = TOOL_METADATA[toolId] || { name: toolId, emoji: '📦', repo: '#' };
+                const versionsList = toolData.versions || [];
+
+                versionsList.forEach(version => {
+                    allVersions.push({
+                        toolId,
+                        toolName: metadata.name,
+                        emoji: metadata.emoji,
+                        repo: metadata.repo,
+                        ...version
+                    });
+                });
+            }
+
+            // Sort by published date (newest first)
+            allVersions.sort((a, b) => {
+                const dateA = new Date(a.published_at || 0);
+                const dateB = new Date(b.published_at || 0);
+                return dateB - dateA;
+            });
+
+            // Group by tool
+            const toolVersions = {};
+            allVersions.forEach(v => {
+                if (!toolVersions[v.toolId]) {
+                    toolVersions[v.toolId] = {
+                        toolName: v.toolName,
+                        emoji: v.emoji,
+                        repo: v.repo,
+                        versions: []
+                    };
+                }
+                toolVersions[v.toolId].versions.push(v);
+            });
+
+            // Render timeline for each tool
+            for (const [toolId, data] of Object.entries(toolVersions)) {
+                const color = getToolColor(toolId);
+                const versionsHtml = data.versions.map((v, index) => `
+                    <div class="timeline-item" style="border-left-color: ${color}">
+                        <div class="timeline-marker">${index + 1}</div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge" style="background-color: ${color}">${v.tag}</span>
+                                    <span class="ms-2 text-muted">${formatRelativeTime(v.published_at)}</span>
+                                </div>
+                                <small class="text-muted">${formatDate(v.published_at)}</small>
+                            </div>
+                            <p class="mt-2 mb-1"><strong>${v.name}</strong></p>
+                            ${v.body ? `<p class="small text-muted mb-0">${truncateText(v.body, 150)}</p>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                timelineItems.push(`
+                    <div class="timeline-section mb-4">
+                        <h5 class="timeline-tool">
+                            ${data.emoji} ${data.toolName}
+                        </h5>
+                        <div class="timeline">
+                            ${versionsHtml}
+                        </div>
+                    </div>
+                `);
+            }
+
+            container.innerHTML = timelineItems.join('');
+        }
+
+        // Truncate text with ellipsis
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength).trim() + '...';
+        }
+
+        // Parse and render changelog
+        function renderChangelog(changelogText) {
+            const container = document.getElementById('changelog-body');
+            const rows = [];
+
+            // Parse markdown table
+            const lines = changelogText.split('\n');
+            let inTable = false;
+            let count = 0;
+            const maxRows = 10;
+
+            for (const line of lines) {
+                // Skip header and separator
+                if (line.startsWith('| Date |') || line.startsWith('|---')) {
+                    inTable = true;
+                    continue;
+                }
+
+                if (!inTable || !line.trim() || count >= maxRows) continue;
+                if (!line.startsWith('|')) continue;
+
+                // Parse table row
+                const parts = line.split('|').map(p => p.trim()).filter(p => p);
+                if (parts.length >= 4) {
+                    const [date, tool, change, details] = parts;
+                    rows.push(`
+                        <tr>
+                            <td>${date}</td>
+                            <td><strong>${tool}</strong></td>
+                            <td><code>${change}</code></td>
+                            <td>${details}</td>
+                        </tr>
+                    `);
+                    count++;
+                }
+            }
+
+            if (rows.length === 0) {
+                container.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No changelog entries found</td></tr>';
+            } else {
+                container.innerHTML = rows.join('');
+            }
+        }
+
+        // Update last updated timestamp
+        function updateLastUpdated(versions) {
+            const container = document.getElementById('last-updated');
+            const latestDate = getLatestUpdateDate(versions);
+            if (latestDate) {
+                container.innerHTML = `<i class="bi bi-clock"></i> Last updated: ${formatDate(latestDate)}`;
+            } else {
+                container.innerHTML = '<i class="bi bi-clock"></i> Last updated: Unknown';
+            }
+        }
+
+        // Get the most recent update date from all versions
+        function getLatestUpdateDate(versions) {
+            let latest = null;
+            for (const toolData of Object.values(versions)) {
+                const versionsList = toolData.versions || [];
+                if (versionsList.length > 0 && versionsList[0].published_at) {
+                    const date = new Date(versionsList[0].published_at);
+                    if (!latest || date > latest) {
+                        latest = date;
+                    }
+                }
+            }
+            return latest ? latest.toISOString() : null;
+        }
+
+        // Load and render all data
+        async function loadDashboard() {
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const dashboardContent = document.getElementById('dashboard-content');
+
+            try {
+                // Load versions.json
+                const versionsResponse = await fetch('../versions.json');
+                if (!versionsResponse.ok) {
+                    throw new Error(`Failed to load versions.json: ${versionsResponse.status}`);
+                }
+                const versions = await versionsResponse.json();
+
+                // Load CHANGELOG.md
+                const changelogResponse = await fetch('../CHANGELOG.md');
+                if (!changelogResponse.ok) {
+                    throw new Error(`Failed to load CHANGELOG.md: ${changelogResponse.status}`);
+                }
+                const changelogText = await changelogResponse.text();
+
+                // Render dashboard
+                renderVersionCards(versions);
+                renderVersionTimeline(versions);
+                renderChangelog(changelogText);
+                updateLastUpdated(versions);
+
+                // Show content, hide loading
+                loadingSpinner.classList.add('d-none');
+                dashboardContent.classList.remove('d-none');
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                loadingSpinner.classList.add('d-none');
+                errorMessage.classList.remove('d-none');
+                errorText.textContent = `Error: ${error.message}. Make sure the dashboard is accessed via GitHub Pages or a local server.`;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>

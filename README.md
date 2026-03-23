@@ -10,6 +10,7 @@ GitHub Actions monitor that tracks new releases of AI coding CLI tools (Gemini C
 - 📬 **Discord Notifications** - Instant alerts when new versions are published
 - 📊 **Release Tracker** - Maintains a human-readable `RELEASES.md` with current versions
 - 📜 **Version History** - Stores up to 5 previous versions per tool with full release notes
+- 📈 **Interactive Dashboard** - Visual dashboard with version cards, timeline, and changelog
 - 🔧 **Configurable** - Easy to extend with additional tools via `watchlist.json`
 - 💰 **Free Tier Friendly** - Runs entirely on GitHub Actions free tier
 
@@ -32,6 +33,9 @@ coding-agent-monitor/
 ├── project-documents/
 │   ├── REQUIREMENTS.md           # Detailed requirements
 │   └── IMPLEMENTATION_PLAN.md    # Implementation checklist
+├── dashboard/
+│   ├── index.html                # Interactive dashboard page
+│   └── styles.css                # Dashboard custom styles
 ├── monitor.py                    # Main Python monitor script
 ├── watchlist.json                # Configurable list of repos to watch
 ├── versions.json                 # Persisted version history (auto-updated, max 5 versions per tool)
@@ -138,6 +142,44 @@ The `versions.json` file stores version history for each tracked tool. It mainta
 - When a new version is detected, the oldest is automatically removed
 - The `body` field contains the full release notes from GitHub
 - Backward compatible: old format (single version per tool) is automatically converted on first run
+
+## Dashboard
+
+The interactive dashboard provides a visual interface for tracking releases:
+
+### Features
+
+- **Version Cards** - Display current version for each tool with release info
+- **Version Timeline** - Visual timeline showing last 5 versions per tool
+- **Recent Changes** - Table of latest updates from CHANGELOG.md
+- **Responsive Design** - Mobile-friendly layout using Bootstrap 5
+
+### Viewing the Dashboard
+
+#### Local Development
+
+```bash
+cd dashboard
+python -m http.server 8080
+# Open http://localhost:8080
+```
+
+#### GitHub Pages
+
+Enable GitHub Pages in your repository settings:
+
+1. Go to **Settings** → **Pages**
+2. Select **Deploy from a branch**
+3. Choose **main** branch and **/ (root)**
+4. Dashboard will be available at: `https://<username>.github.io/coding-agent-monitor/dashboard/`
+
+### Data Sources
+
+The dashboard reads data directly from:
+- `../versions.json` - Current and historical version data
+- `../CHANGELOG.md` - Recent change history
+
+No build process required - the dashboard is a static HTML page that fetches data dynamically.
 
 ## Dependencies
 
