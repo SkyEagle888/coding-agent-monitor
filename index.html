@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Agent Monitor - AI Coding Tools Release Tracker</title>
+    <meta name="description" content="Monitor new releases of AI coding CLI tools like Gemini CLI, Qwen Code, OpenCode, and Oh-My-OpenCode">
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section .lead {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn-dashboard {
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+            color: #764ba2;
+        }
+
+        .btn-github {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-github:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border-color: white;
+        }
+
+        .features-section {
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .tools-section {
+            padding: 4rem 0;
+        }
+
+        .tool-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: #f8f9fa;
+            border-radius: 2rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .tool-badge:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .cta-section {
+            padding: 4rem 0;
+            background: var(--primary-gradient);
+            color: white;
+            text-align: center;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>
+                <i class="bi bi-activity"></i> Coding Agent Monitor
+            </h1>
+            <p class="lead">
+                Automated monitoring and notifications for AI coding CLI tools. 
+                Never miss a new release again.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="dashboard/" class="btn btn-dashboard">
+                    <i class="bi bi-speedometer2"></i> View Dashboard
+                </a>
+                <a href="https://github.com/SkyEagle888/coding-agent-monitor" class="btn btn-github" target="_blank">
+                    <i class="bi bi-github"></i> View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">Features</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3 class="feature-title">Automated Monitoring</h3>
+                        <p class="text-muted mb-0">Daily checks for new releases at 01:00 UTC (09:00 HKT)</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">📬</div>
+                        <h3 class="feature-title">Discord Notifications</h3>
+                        <p class="text-muted mb-0">Instant alerts when new versions are published</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">Release Tracker</h3>
+                        <p class="text-muted mb-0">Maintains version history with up to 5 past releases</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <h3 class="feature-title">Interactive Dashboard</h3>
+                        <p class="text-muted mb-0">Visual dashboard with timeline and changelog</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Monitored Tools Section -->
+    <section class="tools-section">
+        <div class="container">
+            <h2 class="text-center mb-4 fw-bold">Monitored Tools</h2>
+            <p class="text-center text-muted mb-5">
+                Currently tracking releases from these AI coding CLI tools
+            </p>
+            <div class="d-flex justify-content-center flex-wrap">
+                <a href="https://github.com/google-gemini/gemini-cli" class="tool-badge" target="_blank">
+                    🟦 Gemini CLI
+                </a>
+                <a href="https://github.com/QwenLM/qwen-code" class="tool-badge" target="_blank">
+                    🟧 Qwen Code
+                </a>
+                <a href="https://github.com/anomalyco/opencode" class="tool-badge" target="_blank">
+                    🟩 OpenCode
+                </a>
+                <a href="https://github.com/code-yeongyu/oh-my-opencode" class="tool-badge" target="_blank">
+                    🟥 Oh-My-OpenCode
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="mb-3">Ready to Get Started?</h2>
+            <p class="lead mb-4">
+                Fork the repository and set up your own monitoring in minutes
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="dashboard/" class="btn btn-light btn-lg">
+                    <i class="bi bi-speedometer2"></i> View Live Dashboard
+                </a>
+                <a href="https://github.com/SkyEagle888/coding-agent-monitor/fork" class="btn btn-outline-light btn-lg" target="_blank">
+                    <i class="bi bi-git"></i> Fork on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-md-start mb-3 mb-md-0">
+                    <p class="mb-1">
+                        <i class="bi bi-code-slash"></i> Coding Agent Monitor
+                    </p>
+                    <p class="small mb-0">
+                        Built with GitHub Actions • Runs on free tier
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="https://github.com/SkyEagle888/coding-agent-monitor" class="me-3" target="_blank">
+                        <i class="bi bi-github"></i> GitHub
+                    </a>
+                    <a href="dashboard/" class="me-3">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a href="https://github.com/SkyEagle888/coding-agent-monitor/blob/main/README.md" target="_blank">
+                        <i class="bi bi-file-text"></i> Docs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
