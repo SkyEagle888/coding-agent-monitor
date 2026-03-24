@@ -34,3 +34,4 @@
 | 2026-03-18 | oh-my-opencode | `v3.11.2` → `v3.12.1` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-03-18 | oh-my-opencode | `v3.12.1` → `v3.12.3` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-03-22 | opencode | `v1.2.27` → `v1.3.0` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-03-23 | qwen-code | `v0.12.6` → `v0.13.0` | [Release](https://github.com/search?q=qwen-code+releases) |

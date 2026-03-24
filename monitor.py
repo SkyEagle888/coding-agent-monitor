@@ -545,7 +545,8 @@ def update_version_history(stored_versions, tool_id, new_release):
     if new_version["tag"] in existing_tags:
         # Version already in history, move to front if not already there
         if version_list and version_list[0]["tag"] != new_version["tag"]:
-            version_list.remove(new_version)
+            # Find and remove the existing version with the same tag
+            version_list[:] = [v for v in version_list if v["tag"] != new_version["tag"]]
             version_list.insert(0, new_version)
         return
     
