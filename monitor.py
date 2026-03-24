@@ -156,7 +156,7 @@ def save_fetch_failures(failures):
 
 
 def append_changelog_entry(tool_id, old_tag, new_tag, date_str):
-    """Append a new entry to CHANGELOG.md."""
+    """Prepend a new entry to CHANGELOG.md (newest first)."""
     today = datetime.now(TZ_HKT).strftime("%Y-%m-%d") if not date_str else date_str[:10]
 
     # Create file with header if it doesn't exist
@@ -165,10 +165,27 @@ def append_changelog_entry(tool_id, old_tag, new_tag, date_str):
             f.write("# 📝 Version History\n\n")
             f.write("| Date | Tool | Change | Details |\n")
             f.write("|------|------|--------|--------|\n")
+            f.write(f"| {today} | {tool_id} | `{old_tag}` → `{new_tag}` | [Release](https://github.com/search?q={tool_id}+releases) |\n")
+        return
 
-    # Append new entry
-    with open(CHANGELOG_FILE, "a", encoding="utf-8") as f:
-        f.write(f"| {today} | {tool_id} | `{old_tag}` → `{new_tag}` | [Release](https://github.com/search?q={tool_id}+releases) |\n")
+    # Read existing content
+    with open(CHANGELOG_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    # Find the line after the header separator (insert point)
+    insert_index = 0
+    for i, line in enumerate(lines):
+        if line.startswith("|------"):
+            insert_index = i + 1
+            break
+
+    # Insert new entry after the header
+    new_entry = f"| {today} | {tool_id} | `{old_tag}` → `{new_tag}` | [Release](https://github.com/search?q={tool_id}+releases) |\n"
+    lines.insert(insert_index, new_entry)
+
+    # Write back
+    with open(CHANGELOG_FILE, "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 
 def detect_changes(watchlist, fetched_versions, stored_versions):

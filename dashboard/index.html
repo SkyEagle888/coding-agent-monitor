@@ -332,12 +332,12 @@
         function renderChangelog(changelogText) {
             const container = document.getElementById('changelog-body');
             const rows = [];
+            const entries = [];
 
             // Parse markdown table
             const lines = changelogText.split('\n');
             let inTable = false;
-            let count = 0;
-            const maxRows = 10;
+            const maxRows = 20;
 
             for (const line of lines) {
                 // Skip header and separator
@@ -346,23 +346,35 @@
                     continue;
                 }
 
-                if (!inTable || !line.trim() || count >= maxRows) continue;
+                if (!inTable || !line.trim()) continue;
                 if (!line.startsWith('|')) continue;
 
                 // Parse table row
                 const parts = line.split('|').map(p => p.trim()).filter(p => p);
                 if (parts.length >= 4) {
                     const [date, tool, change, details] = parts;
-                    rows.push(`
-                        <tr>
-                            <td>${date}</td>
-                            <td><strong>${tool}</strong></td>
-                            <td><code>${change}</code></td>
-                            <td>${details}</td>
-                        </tr>
-                    `);
-                    count++;
+                    entries.push({ date, tool, change, details });
                 }
+            }
+
+            // Sort by date descending (newest first)
+            entries.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateB - dateA;
+            });
+
+            // Build rows from sorted entries (up to maxRows)
+            for (let i = 0; i < Math.min(entries.length, maxRows); i++) {
+                const { date, tool, change, details } = entries[i];
+                rows.push(`
+                    <tr>
+                        <td>${date}</td>
+                        <td><strong>${tool}</strong></td>
+                        <td><code>${change}</code></td>
+                        <td>${details}</td>
+                    </tr>
+                `);
             }
 
             if (rows.length === 0) {
