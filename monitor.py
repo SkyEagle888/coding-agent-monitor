@@ -287,7 +287,7 @@ def build_alert_message(tool, old_tag, new_release):
         f"**Version:** `{old_tag}` → `{new_tag}`",
         f"**Release:** {release_name}",
         f"**Published:** {published_at}",
-        f"**Link:** {html_url}",
+        f"**Link:** <{html_url}>",
         f"",
         f"**Release Notes:**",
         f"```",
