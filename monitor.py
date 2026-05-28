@@ -8,6 +8,7 @@ Discord notifications when a new version is published.
 
 import json
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -251,6 +252,13 @@ def is_first_run(stored_versions, watchlist):
     return False
 
 
+def suppress_link_embeds(text):
+    """Wrap bare URLs in angle brackets to prevent Discord link previews."""
+    if not text:
+        return text
+    return re.sub(r"(https?://\S+)", r"<\1>", text)
+
+
 def format_timestamp_gmt8(iso_timestamp):
     """Convert ISO timestamp to GMT+8 formatted string."""
     if not iso_timestamp:
@@ -279,6 +287,7 @@ def build_alert_message(tool, old_tag, new_release):
     body = new_release.get("body", "")
     if len(body) > RELEASE_NOTES_TRUNCATE:
         body = body[:RELEASE_NOTES_TRUNCATE] + "..."
+    body = suppress_link_embeds(body)
 
     # Build message
     lines = [
