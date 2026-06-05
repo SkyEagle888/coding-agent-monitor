@@ -77,6 +77,19 @@ jobs:
               }
             }
 
+      - name: Commit and push changes
+        if: steps.monitor.conclusion == 'success'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add versions.json RELEASES.md CHANGELOG.md .fetch_failures.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[skip ci] Update versions, releases, and changelog"
+            git push
+          fi
+
   deploy-cloudflare:
     needs: monitor
     runs-on: ubuntu-latest

@@ -72,6 +72,95 @@ def fetch_latest_release(owner, repo):
         return {"error": str(e)}
 
 
+def fetch_release_by_tag(owner, repo, tag):
+    """
+    Fetch a specific release by tag name from GitHub API.
+
+    Used to backfill full release notes for versions already in history.
+    Returns dict with tag_name, name, published_at, html_url, body
+    or error dict on failure.
+    """
+    url = f"{GITHUB_API_BASE}/{owner}/{repo}/releases/tags/{tag}"
+    headers = {"Accept": "application/vnd.github+json"}
+
+    github_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if github_token:
+        headers["Authorization"] = f"Bearer {github_token}"
+
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        if response.status_code == 404:
+            return {"error": f"Release tag '{tag}' not found"}
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "tag_name": data.get("tag_name", "unknown"),
+            "name": data.get("name", data.get("tag_name", "Untitled")),
+            "published_at": data.get("published_at", ""),
+            "html_url": data.get("html_url", ""),
+            "body": data.get("body", ""),
+        }
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching {owner}/{repo}@{tag}: {e}", file=sys.stderr)
+        return {"error": str(e)}
+
+
+def backfill_missing_bodies(stored_versions, watchlist):
+    """
+    Backfill empty release notes for stored versions.
+
+    For each tool, for each version in its history with an empty body,
+    fetches the full release data from GitHub and populates the body.
+    Modifies stored_versions in place.
+
+    Only fetches when body is empty, so this is a no-op once all stored
+    versions have their notes populated. Versions whose API response
+    returns an empty body are left alone (genuinely empty release notes).
+
+    Returns:
+        backfilled: list of (tool_id, tag) tuples that were updated
+        failed: list of (tool_id, tag, error) tuples that failed to fetch
+    """
+    backfilled = []
+    failed = []
+
+    repo_lookup = {tool["id"]: (tool["owner"], tool["repo"]) for tool in watchlist}
+
+    for tool_id, tool_data in stored_versions.items():
+        if tool_id not in repo_lookup:
+            continue
+
+        owner, repo = repo_lookup[tool_id]
+        version_list = tool_data.get("versions", [])
+
+        for version in version_list:
+            if version.get("body"):
+                continue
+
+            tag = version.get("tag")
+            if not tag:
+                continue
+
+            print(f"Backfilling {tool_id}@{tag}...")
+            release = fetch_release_by_tag(owner, repo, tag)
+
+            if "error" in release:
+                failed.append((tool_id, tag, release["error"]))
+                print(f"  Failed: {release['error']}", file=sys.stderr)
+                continue
+
+            fetched_body = release.get("body", "")
+            if fetched_body:
+                version["body"] = fetched_body
+                backfilled.append((tool_id, tag))
+                print(f"  Backfilled {len(fetched_body)} chars")
+            else:
+                print(f"  Release has no body in API; leaving empty")
+
+    return backfilled, failed
+
+
 def load_versions():
     """
     Load persisted versions from versions.json.
@@ -592,6 +681,16 @@ def main():
     watchlist = load_watchlist()
     stored_versions, format_converted = load_versions()
 
+    # Backfill empty release notes for previously stored versions.
+    # Done before fetching latest releases so the in-memory history is
+    # complete regardless of whether new versions are detected.
+    backfilled, backfill_failed = backfill_missing_bodies(stored_versions, watchlist)
+    backfill_changed = bool(backfilled)
+    if backfill_changed:
+        print(f"Backfilled {len(backfilled)} release note(s)")
+    if backfill_failed:
+        print(f"Backfill failed for {len(backfill_failed)} version(s)", file=sys.stderr)
+
     # Fetch latest releases
     fetched_versions = {}
     for tool in watchlist:
@@ -633,9 +732,10 @@ def main():
     send_discord_message(message)
 
     # Update versions.json with version history
-    # Save if: first run, new versions detected, or format conversion needed
+    # Save if: first run, new versions detected, format conversion needed,
+    # or backfill populated missing release notes.
     versions_changed = first_run or bool(changes)
-    needs_save = versions_changed or format_converted
+    needs_save = versions_changed or format_converted or backfill_changed
 
     if needs_save:
         # Update version history for each tool with successful fetch
