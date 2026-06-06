@@ -2,6 +2,8 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-06-05 | opencode | `v1.16.0` → `v1.16.2` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-06-05 | gemini-cli | `v0.45.1` → `v0.45.2` | [Release](https://github.com/search?q=gemini-cli+releases) |
 | 2026-06-03 | oh-my-opencode | `v3.12.3` → `v4.7.5` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-06-05 | opencode | `v1.3.0` → `v1.16.0` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-03 | qwen-code | `v0.13.0` → `v0.17.1` | [Release](https://github.com/search?q=qwen-code+releases) |

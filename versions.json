@@ -2,6 +2,12 @@
   "gemini-cli": {
     "versions": [
       {
+        "tag": "v0.45.2",
+        "name": "Release v0.45.2",
+        "published_at": "2026-06-05T20:15:25Z",
+        "body": "## What's Changed\n* fix(patch): cherry-pick f40498d to release/v0.45.1-pr-27676 to patch version v0.45.1 and create version 0.45.2 by @gemini-cli-robot in https://github.com/google-gemini/gemini-cli/pull/27700\n\n\n**Full Changelog**: https://github.com/google-gemini/gemini-cli/compare/v0.45.1...v0.45.2"
+      },
+      {
         "tag": "v0.45.1",
         "name": "Release v0.45.1",
         "published_at": "2026-06-04T20:56:59Z",
@@ -39,6 +45,12 @@
   },
   "opencode": {
     "versions": [
+      {
+        "tag": "v1.16.2",
+        "name": "v1.16.2",
+        "published_at": "2026-06-05T15:58:51Z",
+        "body": "## Core\n\n### Bugfixes\n\n- Reasoning summaries now only run on providers that support them, avoiding GPT-5 request failures on compatible backends.\n- Edit operations now refuse loose matches that could overwrite the wrong code or replace an existing file by mistake.\n- Fixed Bedrock sessions hanging before a model response starts. (@alblez)\n\n### Improvements\n\n- Diff viewer now supports next and previous hunk navigation.\n- Terminal themes now refresh after live terminal reloads without stale colors or broken highlighting.\n- Running subagents can now be sent to the background so you can keep working.\n- Sessions now persist system context updates during long-running conversations.\n- Added Snowflake Cortex provider support. (@kameshsampath)\n\n## TUI\n\n### Bugfixes\n\n- Fixed the external editor fallback so attach-mode sessions still open when the original project path is unavailable locally. (@pcadena-lila)\n- Permission replies now route through the correct session directory.\n- `/mo` now prefers the models command in slash autocomplete.\n- Fixed crashes from malformed path or diff metadata in permission and session views.\n\n## Desktop\n\n### Bugfixes\n\n- Fixed titlebar tab overflow clipping.\n- Fixed overflowed titlebar tabs so scrolling and drag regions behave correctly.\n- Improved tab closing and navigation so the next tab is selected more reliably.\n\n### Improvements\n\n- Improved multi-server desktop support with per-server home state and session tabs.\n\n**Thank you to 5 community contributors:**\n- @kameshsampath:\n  - feat(core): add Snowflake Cortex provider (#29901)\n- @pcadena-lila:\n  - fix(tui): fall back to local cwd when editor spawns in attach mode (#30583)\n- @weiconghe:\n  - fix: use mapError instead of orDie for context snapshot decoding (#30905)\n- @alblez:\n  - fix(opencode): resolve Bedrock hang by using node build conditions (#30873)\n- @jerome-benoit:\n  - fix(workflows): retry nix-hashes compute-hash on transient failure (#30743)\n"
+      },
       {
         "tag": "v1.16.0",
         "name": "v1.16.0",
