@@ -2,7 +2,7 @@
 
 ![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main)
 
-*Last updated: 2026-06-06 13:32:05 HKT*
+*Last updated: 2026-06-06 14:02:59 HKT*
 
 | Tool | Current Version | Release Date | Link |
 |------|-----------------|--------------|------|
