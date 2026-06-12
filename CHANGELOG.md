@@ -2,6 +2,8 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-06-12 | oh-my-opencode | `v4.8.1` → `v4.9.2` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
+| 2026-06-12 | opencode | `v1.17.3` → `v1.17.4` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-10 | opencode | `v1.17.0` → `v1.17.3` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-10 | opencode | `v1.16.2` → `v1.17.0` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-09 | oh-my-opencode | `v4.7.5` → `v4.8.1` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
