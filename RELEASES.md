@@ -2,10 +2,10 @@
 
 ![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main)
 
-*Last updated: 2026-06-14 14:57:33 HKT*
+*Last updated: 2026-06-15 15:40:00 HKT*
 
 | Tool | Current Version | Release Date | Link |
 |------|-----------------|--------------|------|
 | 🟧 qwen-code | `v0.18.0` | 2026-06-12 22:41:34 HKT | [Release](https://github.com/QwenLM/qwen-code/releases/tag/v0.18.0) |
-| 🟩 opencode | `v1.17.6` | 2026-06-14 06:39:10 HKT | [Release](https://github.com/anomalyco/opencode/releases/tag/v1.17.6) |
-| 🟥 oh-my-opencode | `v4.9.2` | 2026-06-12 09:20:21 HKT | [Release](https://github.com/code-yeongyu/oh-my-openagent/releases/tag/v4.9.2) |
+| 🟩 opencode | `v1.17.7` | 2026-06-15 02:49:23 HKT | [Release](https://github.com/anomalyco/opencode/releases/tag/v1.17.7) |
+| 🟥 oh-my-opencode | `v4.10.0` | 2026-06-15 00:01:32 HKT | [Release](https://github.com/code-yeongyu/oh-my-openagent/releases/tag/v4.10.0) |
