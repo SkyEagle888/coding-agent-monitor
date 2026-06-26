@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.17.11",
+        "name": "v1.17.11",
+        "published_at": "2026-06-25T12:09:29Z",
+        "body": "## Core\n### Improvements\n- Add session snapshots and revert controls so you can roll a session back to an earlier message, including file changes.\n\n### Bugfixes\n- Always print the MCP OAuth URL so manual sign-in still works when opening the browser flow.\n\n## Desktop\n### Improvements\n- Add Chrome-style tab cycle shortcuts with `mod+1` through `mod+9`.\n- Add draggable tabs. (@arvsrn)\n- Improve the empty home state when you have no sessions. (@arvsrn)\n- Restyle the jump-to-latest button in the v2 session view. (@arvsrn)\n- Improve the redesigned desktop layout, including better titlebar tabs and archived sessions. (@arvsrn)\n\n### Bugfixes\n- Keep prompt drafts attached to the correct project server.\n- Restore consistent titlebar tab sizing and layout.\n- Restore home actions when session lists are empty or still loading.\n- Keep todo docks in place when switching between sessions.\n- Automatically close tabs for sessions that no longer exist.\n- Keep provider dialogs, prompt rollbacks, and async attachments tied to the session where they started.\n- Clear late session notifications after you open the session.\n- Remove the session loading stripe.\n\n**Thank you to 2 community contributors:**\n- @isaachuangGMICLOUD:\n  - docs: add GMI Cloud provider entry to providers directory (#32914)\n- @arvsrn:\n  - feat(app): draggable tabs (#31364)\n  - feat(app): ui improvements (#32438)\n  - fix(app): update all v1 new-session icons (#32017)\n  - feat(app): no sesssions empty state (#33315)\n  - feat(app): restyle v2 jump-to-latest button (#33809)\n"
+      },
+      {
         "tag": "v1.17.10",
         "name": "v1.17.10",
         "published_at": "2026-06-24T20:37:42Z",
@@ -80,12 +86,6 @@
         "name": "v1.17.7",
         "published_at": "2026-06-14T18:49:23Z",
         "body": "## Core\n\n### Bugfixes\n\n- Plugin client requests now reuse the active server instead of assuming the default local port.\n- ACP shell tool calls now show the command and working directory from the start.\n- Plugin-provided shell environment variables now apply to PTY sessions.\n\n### Improvements\n\n- MCP servers can now receive the current workspace as a client root.\n\n## TUI\n\n### Bugfixes\n\n- MCP debug now uses the SDK's latest protocol version.\n\n## Desktop\n\n### Bugfixes\n\n- The new session route now stays scoped to its own draft server, so prompts and state target the right workspace.\n\n## SDK\n\n### Improvements\n\n- SDK clients now refresh model and provider availability when integrations change, and credential update and remove calls accept `location`.\n"
-      },
-      {
-        "tag": "v1.17.6",
-        "name": "v1.17.6",
-        "published_at": "2026-06-13T22:39:10Z",
-        "body": "## Core\n### Bugfixes\n- Improved MCP server compatibility by declaring OpenCode's supported client capabilities.\n"
       }
     ]
   },
