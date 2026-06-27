@@ -2,6 +2,7 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-06-26 | qwen-code | `v0.19.2` → `cua-driver-rs-v0.6.8` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-06-25 | opencode | `v1.17.10` → `v1.17.11` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-24 | opencode | `v1.17.9` → `v1.17.10` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-24 | qwen-code | `v0.19.1` → `v0.19.2` | [Release](https://github.com/search?q=qwen-code+releases) |
