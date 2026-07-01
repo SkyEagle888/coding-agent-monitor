@@ -2,6 +2,8 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-07-01 | oh-my-opencode | `v4.14.0` → `v4.15.0` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
+| 2026-06-30 | opencode | `v1.17.11` → `v1.17.12` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-06-29 | oh-my-opencode | `v4.13.0` → `v4.14.0` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-06-28 | qwen-code | `cua-driver-rs-v0.6.8` → `v0.19.3` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-06-26 | qwen-code | `v0.19.2` → `cua-driver-rs-v0.6.8` | [Release](https://github.com/search?q=qwen-code+releases) |
