@@ -2,6 +2,9 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-07-10 | oh-my-opencode | `v4.16.0` → `v4.16.2` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
+| 2026-07-09 | opencode | `v1.17.15` → `v1.17.18` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-07-10 | qwen-code | `v0.19.8` → `pr6633-screenshots` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-07-08 | qwen-code | `v0.19.7` → `v0.19.8` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-07-07 | oh-my-opencode | `v4.15.1` → `v4.16.0` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-07-07 | opencode | `v1.17.14` → `v1.17.15` | [Release](https://github.com/search?q=opencode+releases) |
