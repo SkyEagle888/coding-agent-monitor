@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.7",
+        "name": "v1.18.7",
+        "published_at": "2026-07-27T07:33:00Z",
+        "body": "## Desktop\n### Bugfixes\n- Remove the extra titlebar inset in fullscreen on macOS.\n- Keep command palette entries from reappearing incorrectly when shadowed commands are removed.\n- Add scrolling to the project selector dropdown when the list is long. (@david1gp)\n\n**Thank you to 2 community contributors:**\n- @ProdigyRahul:\n  - fix(ui): keep mutable selects open (#39027)\n- @david1gp:\n  - fix(app): add scroll to project selector dropdown (#39016)\n"
+      },
+      {
         "tag": "v1.18.6",
         "name": "v1.18.6",
         "published_at": "2026-07-27T02:47:44Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.3",
         "published_at": "2026-07-16T15:34:33Z",
         "body": "## Core\n### Improvements\n- Added an Up Arrow shortcut to close the subagent picker when the first item is selected.\n\n## Desktop\n### Bugfixes\n- Fixed home page scrolling so sticky headers and the session list behave correctly.\n- Fixed startup readiness so WSL server loading is included before the desktop app reports ready.\n- Removed the inactive help button from the app layout.\n- Fixed custom agent selector visibility when custom agents are available.\n\n### Improvements\n- Home page command palette search can now find and open sessions.\n"
-      },
-      {
-        "tag": "v1.18.2",
-        "name": "v1.18.2",
-        "published_at": "2026-07-15T16:15:38Z",
-        "body": "## Core\n\n### Bugfixes\n\n- Stopped subagents from launching nested subagents by default, with a configurable `subagent_depth` limit when needed.\n- Improved default reasoning depth for Meta models.\n\n## Desktop\n\n### Improvements\n\n- Added `Mod+N` as another shortcut for opening a new tab.\n\n### Bugfixes\n\n- Restored the Help button in release builds.\n- Kept sessions with `null` archive times visible instead of dropping them from the home list.\n- Hid the drawer close button on Windows where it conflicts with the window chrome.\n\n**Thank you to 1 community contributor:**\n- @BB-84C:\n  - fix(core): tolerate AlreadyExists in FSUtil.ensureDir (#36542)\n"
       }
     ]
   },
