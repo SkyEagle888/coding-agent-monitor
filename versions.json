@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.13",
+        "name": "v1.18.13",
+        "published_at": "2026-08-04T12:12:32Z",
+        "body": "## TUI\n### Bugfixes\n- GitHub pull request reviews now include the pull request number and URL in context.\n\n## Desktop\n### Bugfixes\n- Fixed several right-to-left layout issues across tabs, drawers, resizing, and titlebar interactions.\n- Fixed shared right-to-left UI behavior such as directional icons and drawer placement.\n- Sessions without titles now fall back to generated names instead of appearing blank.\n- Moved markdown parsing off the main thread to keep the app more responsive while rendering messages.\n\n### Improvements\n- Localized more desktop UI copy, including native menus, update dialogs, and help content.\n- Added early right-to-left layout support across the app and session views.\n- Added locale-aware plural rules so translated counts and summaries read correctly.\n- Expanded translation coverage and added more supported desktop languages.\n\n**Thank you to 1 community contributor:**\n- @amypoolside:\n  - docs: add Poolside provider setup (#39187)\n"
+      },
+      {
         "tag": "v1.18.12",
         "name": "v1.18.12",
         "published_at": "2026-08-04T00:55:29Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.9",
         "published_at": "2026-07-28T18:15:01Z",
         "body": "## Core\n### Bugfixes\n- Restored compatibility with legacy MCP SDK clients.\n\n## Desktop\n### Bugfixes\n- Fixed a Solid cleanup crash that could break navigation in the desktop app.\n- Fixed home session loading so the session list can update without suspending the whole page.\n\n### Improvements\n- Removed the extra vertical borders from the V2 home projects view.\n- Added an opt-in V2 desktop sidecar backed by the bundled CLI service.\n- Added collapsible model provider sections in V2 settings.\n\n**Thank you to 1 community contributor:**\n- @roborew:\n  - fix(desktop): patch @dnd-kit/solid to preserve core scroll plugins (#38119)\n"
-      },
-      {
-        "tag": "v1.18.7",
-        "name": "v1.18.7",
-        "published_at": "2026-07-27T07:33:00Z",
-        "body": "## Desktop\n### Bugfixes\n- Remove the extra titlebar inset in fullscreen on macOS.\n- Keep command palette entries from reappearing incorrectly when shadowed commands are removed.\n- Add scrolling to the project selector dropdown when the list is long. (@david1gp)\n\n**Thank you to 2 community contributors:**\n- @ProdigyRahul:\n  - fix(ui): keep mutable selects open (#39027)\n- @david1gp:\n  - fix(app): add scroll to project selector dropdown (#39016)\n"
       }
     ]
   },
