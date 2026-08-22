@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.21",
+        "name": "v1.18.21",
+        "published_at": "2026-08-21T14:51:11Z",
+        "body": "## Core\n\n### Bugfixes\n\n- Continue responses when a model reports an unknown finish reason instead of stopping early\n- Route Vertex AI `eu` and `us` multi-region Gemini requests through REP endpoints\n\n## Desktop\n\n### Bugfixes\n\n- Keep file search results visible while the next search is loading\n- Register the archive session command in both desktop layouts (@NathanTCode)\n\n**Thank you to 1 community contributor:**\n- @NathanTCode:\n  - fix(app): register archive session command in both layouts (#41741)\n"
+      },
+      {
         "tag": "v1.18.19",
         "name": "v1.18.19",
         "published_at": "2026-08-20T06:22:06Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.15",
         "published_at": "2026-08-07T06:49:55Z",
         "body": "## Core\n\n### Bugfixes\n\n- Chronological message ordering now stays correct even when imported or legacy message IDs are out of order.\n- Revert and fork actions now use real message chronology instead of message ID ordering.\n- Truncation cleanup now removes stale files by file timestamp more reliably.\n- Repeated compaction now keeps earlier tool-call history in summaries instead of dropping orphaned results.\n- Blob-based attachments now load correctly in the web UI. (@rexdotsh)\n\n## Desktop\n\n### Improvements\n\n- Added much broader locale coverage across the desktop app.\n- Export full session transcripts as JSON from the UI.\n\n### Bugfixes\n\n- Session timelines now respect chronological message boundaries more reliably.\n- Stored messages now stay ordered by creation time.\n- Session lists now sort by persisted activity time more reliably.\n- Language names now stay native in the locale picker.\n- Filled in missing translations across existing locales.\n\n**Thank you to 3 community contributors:**\n- @rexdotsh:\n  - fix(server): allow blob attachments in web UI (#40692)\n- @ayubun:\n  - fix(tui): support copying over ssh with `set-clipboard on` tmux config (#30472)\n- @dangooddd:\n  - feat(tui): add cursor style configuration (#32295)\n"
-      },
-      {
-        "tag": "v1.18.14",
-        "name": "v1.18.14",
-        "published_at": "2026-08-05T20:58:55Z",
-        "body": "## Core\n\n### Improvements\n\n- Simplified xAI login to a single device-code flow that works better in headless and remote environments.\n\n### Bugfixes\n\n- Preserved structured mid-stream provider errors so compatible providers can retry failed responses.\n- Retried more transient provider and network errors instead of failing immediately.\n- Counted cache writes in ACP usage totals.\n- Logged remote workspace 5xx response bodies in the host logs to make proxy failures easier to debug. (@jamesmurdza)\n- Stopped sending the host `directory` path to remote workspaces so prompts resolve from the remote project root. (@jamesmurdza)\n- Waited for queued ACP session updates before ending a turn.\n\n**Thank you to 1 community contributor:**\n- @jamesmurdza:\n  - fix(server): don't forward host directory to remote workspace (#40136)\n  - fix(server): log upstream 5xx bodies from proxied workspace requests (#40135)\n"
       }
     ]
   },
