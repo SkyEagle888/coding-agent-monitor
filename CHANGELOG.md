@@ -2,6 +2,8 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-08-24 | opencode | `v1.18.21` → `v1.18.22` | [Release](https://github.com/search?q=opencode+releases) |
+| 2026-08-24 | qwen-code | `v0.22.0` → `pr-9806-verification-assets` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-08-22 | qwen-code | `v0.21.15` → `v0.22.0` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-08-21 | opencode | `v1.18.19` → `v1.18.21` | [Release](https://github.com/search?q=opencode+releases) |
 | 2026-08-20 | opencode | `v1.18.18` → `v1.18.19` | [Release](https://github.com/search?q=opencode+releases) |
