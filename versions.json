@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.25",
+        "name": "v1.18.25",
+        "published_at": "2026-08-28T05:58:20Z",
+        "body": "## Core\n### Bugfixes\n- Fixed Azure authentication so Azure CLI sign-in works without requiring Bun.\n"
+      },
+      {
         "tag": "v1.18.23",
         "name": "v1.18.23",
         "published_at": "2026-08-25T06:30:49Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.19",
         "published_at": "2026-08-20T06:22:06Z",
         "body": "## Core\n\n### Improvements\n\n- Added native OpenAI and Anthropic passthroughs for Cloudflare AI Gateway models.\n- Matched Codex rate limits more closely to ChatGPT subscription limits. (@GameOn223)\n\n### Bugfixes\n\n- Removed built-in Qwen sampling defaults that could send unsupported settings.\n- Properly show authenticated providers in `/connect`. (@OpeOginni)\n- Ignore malformed model pricing instead of breaking usage cost calculation.\n- Fall back when OpenAI websocket requests exceed message size limits.\n- Forward ChatGPT workspace compute residency to Codex requests.\n- Updated the default Console URL used by account connection flows.\n- Enabled web search when using the OpenCode Go provider.\n- Preserved compatibility with existing v1 databases.\n\n## Desktop\n\n### Bugfixes\n\n- Kept saved server details editable in the server dialog.\n\n**Thank you to 4 community contributors:**\n- @TechyAditya:\n  - fix(skills): Update global config path in documentation (#42337)\n- @GameOn223:\n  - tweak: match codex limits for openai models exactly when using chatgpt subscription (#39082)\n- @OpeOginni:\n  - fix(opencode): properly show authed providers on /connect command (#39915)\n- @bhuvan2134686:\n  - docs: add SCX.ai to the providers list (#42520)\n"
-      },
-      {
-        "tag": "v1.18.18",
-        "name": "v1.18.18",
-        "published_at": "2026-08-13T01:15:04Z",
-        "body": "## Core\r\n### Bugfixes\r\n- Select the Kimi system prompt correctly for official Moonshot and Kimi providers\r\n- Fix xhigh reasoning effort for xai models\r\n"
       }
     ]
   },
