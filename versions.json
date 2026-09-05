@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.29",
+        "name": "v1.18.29",
+        "published_at": "2026-09-04T23:47:16Z",
+        "body": "## Core\r\n\r\n### Bugfixes\r\n\r\n- Allow Codex OAuth model filtering to recognize integer GPT versions like `gpt-6`\r\n- Fixes issue of gpt-6-astra not showing up for openai subscription users\r\n\r\n**Thank you to 2 community contributors:**\r\n- @Peter267:\r\n  - docs(zh): fix bold rendering by adding spaces around asterisks (#46231)\r\n- @heimoshuiyu:\r\n  - feat(console): add quota reset support action (#47313)\r\n"
+      },
+      {
         "tag": "v1.18.27",
         "name": "v1.18.27",
         "published_at": "2026-09-02T21:41:01Z",
@@ -80,17 +86,17 @@
         "name": "v1.18.23",
         "published_at": "2026-08-25T06:30:49Z",
         "body": "## Core\n\n### Bugfixes\n\n- Fixed Cloudflare AI Gateway routing for third-party providers so non-Workers models work through the gateway's REST API. (@superhighfives)\n- Fixed Anthropic models through Cloudflare AI Gateway by converting dotted model IDs like `claude-haiku-4.5` to the dashed slug Anthropic expects. (@superhighfives)\n- Fixed parent session IDs being sent in request headers for session-aware providers.\n\n## TUI\n\n### Bugfixes\n\n- Fixed GitHub auth for immutable OIDC subject tokens.\n\n**Thank you to 1 community contributor:**\n- @superhighfives:\n  - fix(provider): send Anthropic's dashed native slug through the AI Gateway (#44281)\n  - fix(provider): route non-native Cloudflare AI Gateway providers via the REST API (#44828)\n"
-      },
-      {
-        "tag": "v1.18.22",
-        "name": "v1.18.22",
-        "published_at": "2026-08-24T14:37:19Z",
-        "body": "## Core\r\n\r\n### Bugfixes\r\n\r\n- Removed outdated OpenCode Go first-month discount messaging and pricing.\r\n- Fixed OpenCode device login links when servers return relative verification URLs or use a base path.\r\n- Fixed `textVerbosity` being sent to OpenAI-compatible providers that do not support it. (@joelstucki-taulia)\r\n- Updated the Amazon Bedrock provider for compatibility fixes.\r\n\r\n## Desktop\r\n\r\n### Bugfixes\r\n\r\n- Keep model provider headers visible while scrolling the model picker.\r\n\r\n**Thank you to 1 community contributor:**\r\n- @joelstucki-taulia:\r\n  - fix(provider): guard textVerbosity injection for @ai-sdk/openai-compatible providers (#43915)\r\n"
       }
     ]
   },
   "oh-my-opencode": {
     "versions": [
+      {
+        "tag": "v5.0.0-beta.42",
+        "name": "v5.0.0-beta.42",
+        "published_at": "2026-09-04T16:59:36Z",
+        "body": "# omo 5.0.0-beta.42\n\n> beta.41 was never published: its first release attempt failed the CI gate and the retry re-selected the stale stamp commit, so the number was skipped rather than shipping a tree that lacked the engine bump. This release carries everything intended for beta.41.\n\nEngine: **@code-yeongyu/senpi 2026.9.4-3** (beta.40 shipped 2026.9.3-2 \u2014 this beta moves the engine across 2026.9.4, 2026.9.4-2 and 2026.9.4-3).\n\n## Highlights\n\n### Anthropic native tool search no longer 400s\nThe headline engine fix. Native tool search sent `tool_reference` blocks under a `name` field instead of the API's `tool_name`, and the BM25 server tool was injected on **every** `anthropic-messages` endpoint \u2014 including gateways, proxies and Kimi-coding hosts that reject it. Either one returned\n`400 tools.N.tool_search_tool_bm25_20251119.name: Input should be 'tool_search_tool_bm25'` (or an opaque invalid-request error), after which the adapter disabled native search for the rest of the session. Injection is now gated to models that actually support tool search (Opus/Sonnet 4.5+ and the Fable line), and the reference field matches the wire contract. (senpi #1354)\n\n### Korean and non-ASCII memory finally round-trips\nMemory slugs, git paths and recall query planning keep Korean/non-Latin letters instead of mangling them, with compatibility for directories written by older builds. (#7739, #7741)\n\n### Release plumbing corrected\nEvery GitHub release is created as a full release, and the Latest badge is decided from the highest **published** semver rather than tag order. (#7743, #7761)\n\n### Windows: a leaked SQLite handle no longer stalls the harness\n`node:sqlite`'s `DatabaseSync.close()` does not finalize outstanding statements on Bun 1.4, so one\n`prepare()` left the store's file handle open until GC. POSIX hides this (unlink ignores open handles) but\nWindows keeps the file locked, and the next open of the same store blocks \u2014 sibling-harness detection could\nstall for tens of seconds. Every `prepare()` in the credential readers and their tests is gone, replaced by\n`exec()` with a row-sink function, and a contract test now asserts that no file handle survives `close()`.\n(#7775)\n\n## Fixed\n\n- `omo-senpi`: the conditional x-search skill ships and no longer logs at startup (#7745); Bun skill guidance in the ultrawork directive is gated instead of unconditional (#7754); the senpi hooks-state lock is granted to every memory sandbox (#7756); unsupported isolation traversal fails closed instead of looking complete (#7769)\n- `lsp-core`: a diagnostic pull that times out now awaits its cancellation write, so `$/cancelRequest` is not lost on Windows (#7773)\n- `senpi-task`: PATH senpi executables that do not match the running engine are rejected (#7758); lead tasklist tools are deferred to tool_search (#7737)\n- `omo-native`/`omob`: hoisted bin dir resolution for scoped engine packages (#7755), architect blockers closed in the omob pipeline (#7747), skill-source filter + cache locking + provenance mirrors root-fixed (#7763), dev binary built from the latest commits with build provenance (#7740)\n- `shared-skills`: page work routes to a real browser before the CLI (#7751), browser QA and research browsing go through the eval kernel (#7750), CloakBrowser's venv interpreter is used in the launch step too (#7757)\n- Dependencies: `@code-yeongyu/senpi` pin moved to 2026.9.4-2 then 2026.9.4-3 (#7749, #7772)\n- Isolation QA snapshots assert the real per-platform contract instead of POSIX-only outcomes, so Windows reports capability failures explicitly (#7770, #7775)\n\n## Engine changes (senpi 2026.9.4 \u2192 2026.9.4-3)\n\n- Terminal monitors and background Bash sessions are recorded per session, with a single startup notification for carried-over/lost/expired state, and monitors expose a stable `mon_` id while `bash_output`/`bash_input`/`bash_resize`/`kill_bash` accept either id\n- A spawned RPC host that never answers `get_protocol_info` reports why instead of surfacing a raw `powershell.exe` failure, and no longer leaks its pidfile and socket\n- File-backed credential, auth and settings locks wait through bounded contention retries and report an actionable transient error instead of burning the provider fallback chain\n- Image generation treats a seeded placeholder key as absent, so it falls through to a configured gateway instead of failing with an OpenAI 401\n- Hook trust-state reads fail open when the lock directory cannot be created (sandboxed/read-only children); writers still fail closed\n- `bun install --frozen-lockfile` works on a clean checkout again\n\n## Internal / tests\n\n- Windows `memory-core` unmerged-entry timing (#7767), omob default dirs asserted with the host path separator (#7759), isolation state-race suite determinism (#7770)\n- Task and memory tool descriptions dieted (-369 tokens) (#7738), shipped skill descriptions rewritten as routing text (#7744), review-work replaced with orchestrator QA plus one gate reviewer (#7742), ulw-research browsing worker made binding and render-first (#7760)\n"
+      },
       {
         "tag": "v5.0.0-beta.40",
         "name": "v5.0.0-beta.40",
@@ -114,12 +120,6 @@
         "name": "v5.0.0-beta.5",
         "published_at": "2026-08-10T10:13:07Z",
         "body": "- b5feb7746 Merge pull request #6707 from code-yeongyu/release/v5.0.0-beta.5-source-state\n- 56593dc78 Merge pull request #6708 from code-yeongyu/fix/npm-ci-stale-node-modules\n- 1b06566ed fix(windows): stage over a removed target and assert the launcher PATH prepend\n- a4d64b14b fix(windows): resolve the hoisted shim bin dir and give git tests a real timeout\n- b91a7f595 test(omo-native): gate POSIX-only contracts on Windows and surface build stderr\n- 82e76554c test(omo-opencode): wait for the clock to advance instead of a fixed sleep\n- 7bd338df6 Merge pull request #6695 from code-yeongyu/feat/omo-brand-unification\n- 65c9fc7fc test(omo-native): expand Windows short paths in the launcher fixture\n- efdd7aa4f chore(script): re-pin the publish-shape audit hit after the comment shift\n- 7ef6a432e fix(script): make the publish-shape test line-ending independent\n- 05604df78 test(omo-native): assert OMO_BIN by target instead of path spelling\n- b2ca09401 test(omo-native): guard against pinning an engine that ignores the brand\n- c3cb6c832 docs(omo-native): document the brand contract, flat home and update channel\n- 4ea82b508 feat(omo-native): hand the omo brand profile and update channel to the engine\n"
-      },
-      {
-        "tag": "v5.0.0-beta.3",
-        "name": "v5.0.0-beta.3",
-        "published_at": "2026-08-10T01:36:25Z",
-        "body": "- a8ec7b130 Merge pull request #6684 from code-yeongyu/release/v5.0.0-beta.3-source-state\n- fd7a19588 Merge pull request #6683 from code-yeongyu/feat/beta3-memory\n- 4a4a24bba Merge pull request #6682 from code-yeongyu/docs/memory-letta-attribution\n"
       }
     ]
   }
