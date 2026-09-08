@@ -92,6 +92,12 @@
   "oh-my-opencode": {
     "versions": [
       {
+        "tag": "v5.0.0-beta.48",
+        "name": "v5.0.0-beta.48",
+        "published_at": "2026-09-07T17:30:28Z",
+        "body": "- a470d3d9d Merge pull request #7927 from code-yeongyu/release/v5.0.0-beta.48-source-state\n- bcbdb3980 Merge pull request #7922 from code-yeongyu/fix/facts-child-completion-7921-20260907\n- 41f4da121 Merge pull request #7917 from code-yeongyu/fix/windows-flake-determinism\n- 3726c9ecb Merge pull request #7916 from code-yeongyu/fix/lsp-daemon-packaged-spawn-bun-env\n- bdc1f2177 Merge pull request #7918 from code-yeongyu/docs/memorian-aha-moment\n- 21643b549 docs(memory): document the Memorian recall gate behind the Aha moment notice\n- b9fb35461 test(hooks): cross the legacy truncate/write boundary in-process\n- c6fda841c test(team-mode): observe fallback wakes through injected dispatch timing\n- 51385f235 test(lsp-daemon): keep the fixture path free of legacy command strings\n- 78b925c5e style(lsp-daemon): sort the injected child_process import names\n- 3386d8f38 fix(lsp-daemon): force BUN_BE_BUN when spawning the packaged daemon\n- 27e70dcff test(lsp-daemon): observe the packaged daemon spawn options\n\n**Thank you to 1 community contributor:**\n- @sisyphus-dev-ai:\n  - docs(memory): document the Memorian recall gate behind the Aha moment notice\n  - Merge pull request #7927 from code-yeongyu/release/v5.0.0-beta.48-source-state\n"
+      },
+      {
         "tag": "v5.0.0-beta.46",
         "name": "v5.0.0-beta.46",
         "published_at": "2026-09-07T04:58:47Z",
@@ -114,12 +120,6 @@
         "name": "v5.0.0-beta.40",
         "published_at": "2026-09-04T03:55:40Z",
         "body": "- f8aba1b94 Merge pull request #7735 from code-yeongyu/release/v5.0.0-beta.40-source-state\n- 20ac67e6d Merge pull request #7734 from code-yeongyu/fix/anthropic-tool-search-compat-20260904\n- 3106eb5bd test(omo-native): guard the engine-owned Anthropic tool-search contract\n- c6e7dd7fb Merge pull request #7729 from code-yeongyu/feat/ultrawork-js-eval-maxxing\n- 27ddc4d0d test(ci): register npm-dist-tag-rollback.yml in the job-summary coverage gate\n- eabe9d111 Merge pull request #7724 from code-yeongyu/ci/npm-dist-tag-rollback-20260904\n"
-      },
-      {
-        "tag": "v5.0.0-beta.19",
-        "name": "v5.0.0-beta.19",
-        "published_at": "2026-08-24T18:15:07Z",
-        "body": "- b48ab1086 Merge pull request #7207 from code-yeongyu/release/v5.0.0-beta.19-source-state\n- 02ba00c7f Merge pull request #7203 from code-yeongyu/release/20260824-beta19-pin\n- 37bcb9cd0 Merge pull request #7198 from code-yeongyu/release/20260824-beta18\n- b26fafa99 test(deps): raise picomatch safety floor\n- 845d63211 chore(deps): refresh beta runtime dependencies\n- 8833800ae Merge pull request #7176 from code-yeongyu/fix/residual-followups-20260824\n- d982014de test(omo): capture residual followup evidence\n- 924c0c5c6 chore(web): pin biome to locked 2.4.15\n- 3f88bfb10 ci(codex): gate every plugin component check\n- ea8ee43b7 Merge pull request #7175 from code-yeongyu/feat/massulw-goal-verify\n- 76daf86b9 feat(skills): bind mass-ulw runs to a goal carrying result verification\n- a2eeacabb Merge pull request #7174 from code-yeongyu/initdeep-refresh-20260824\n- f7cdde8b5 docs(agents): refresh knowledge base for 2026-08-24 HEAD\n- 2a28ea8cd Merge pull request #7173 from code-yeongyu/fix/ulw-loop-component-check-20260824\n- 66de4fc15 chore(omo-codex): clean every plugin component check\n- 46aacea73 chore(omo-codex): clean ulw-loop component checks\n- f8ad86e0b Merge pull request #7171 from code-yeongyu/fix/ulw-checkpoint-snapshot-20260824\n- 680fa0dd8 Merge pull request #7170 from code-yeongyu/docs/main-profile-safety\n- a90944990 Merge pull request #7168 from code-yeongyu/docs/main-profile-safety\n- 7222b21aa fix(omo-codex): accept title-based goal snapshots\n- 302f3dd0d chore(ulw-loop): resync bundled ultrawork directive\n- da0d7bd54 chore(ultrawork): resync codex directive copies\n- 5eb9e6f4a docs(skills): require cloned profiles for agent-driven browser clears\n- f3642fcda Merge pull request #7167 from code-yeongyu/feat/start-work-dag-lanes\n- cabecc588 feat(skills): route dependency-ordered start-work lanes through a dag run\n- 0f06ba45e Merge pull request #7163 from code-yeongyu/feat/dag-tui-live-status\n\n**Thank you to 1 community contributor:**\n- @sisyphus-dev-ai:\n  - Merge pull request #7207 from code-yeongyu/release/v5.0.0-beta.19-source-state\n"
       }
     ]
   }
