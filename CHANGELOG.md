@@ -2,6 +2,7 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-09-18 | oh-my-opencode | `v5.0.0-beta.68` → `v5.0.0-beta.72` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-09-16 | oh-my-opencode | `v5.0.0-beta.65` → `v5.0.0-beta.68` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-09-16 | qwen-code | `v0.23.4` → `v0.24.0` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-09-16 | oh-my-opencode | `v5.0.0-beta.62` → `v5.0.0-beta.65` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
