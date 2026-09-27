@@ -2,10 +2,10 @@
 
 ![Workflow Status](https://github.com/SkyEagle888/coding-agent-monitor/actions/workflows/monitor.yml/badge.svg?branch=main)
 
-*Last updated: 2026-09-26 15:44:06 HKT*
+*Last updated: 2026-09-27 16:12:21 HKT*
 
 | Tool | Current Version | Release Date | Link |
 |------|-----------------|--------------|------|
 | 🟧 qwen-code | `sdk-typescript-v0.1.16` | 2026-09-26 09:26:02 HKT | [Release](https://github.com/QwenLM/qwen-code/releases/tag/sdk-typescript-v0.1.16) |
 | 🟩 opencode | `v1.18.32` | 2026-09-22 06:51:20 HKT | [Release](https://github.com/anomalyco/opencode/releases/tag/v1.18.32) |
-| 🟥 oh-my-opencode | `v5.0.0-beta.90` | 2026-09-25 07:46:20 HKT | [Release](https://github.com/code-yeongyu/oh-my-openagent/releases/tag/v5.0.0-beta.90) |
+| 🟥 oh-my-opencode | `v5.0.1` | 2026-09-27 14:08:54 HKT | [Release](https://github.com/code-yeongyu/oh-my-openagent/releases/tag/v5.0.1) |
