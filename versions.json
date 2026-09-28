@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.18.33",
+        "name": "v1.18.33",
+        "published_at": "2026-09-28T04:22:46Z",
+        "body": "## Core\r\n\r\n### Bugfixes\r\n- Cloudflare AI Gateway models now honor provider response and stream timeouts. (@danlapid)\r\n- MCP browser launch failures are now reported when the launcher exits immediately.\r\n- Debug configuration output now redacts credentials and sensitive headers.\r\n- Gemini thinking defaults and effort options now match the supported controls across model generations. (@markmcd)\r\n\r\n**Thank you to 5 community contributors:**\r\n- @dc85:\r\n  - docs(web): add Claude Opus 5.5, GPT 6 Sol, and GPT 6 Luna to Zen (#50708)\r\n- @vglafirov:\r\n  - maint(gitlab): bump gitlab-ai-provider to 6.16.0 (#50742)\r\n- @markmcd:\r\n  - fix(gemini): switch thinking default logic (#50841)\r\n- @remorses:\r\n  - docs(web): link kimaki to product website (#49735)\r\n- @danlapid:\r\n  - fix(opencode): apply provider timeouts to Cloudflare AI Gateway models (#51549)\r\n"
+      },
+      {
         "tag": "v1.18.32",
         "name": "v1.18.32",
         "published_at": "2026-09-21T22:51:20Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.29",
         "published_at": "2026-09-04T23:47:16Z",
         "body": "## Core\r\n\r\n### Bugfixes\r\n\r\n- Allow Codex OAuth model filtering to recognize integer GPT versions like `gpt-6`\r\n- Fixes issue of gpt-6-astra not showing up for openai subscription users\r\n\r\n**Thank you to 2 community contributors:**\r\n- @Peter267:\r\n  - docs(zh): fix bold rendering by adding spaces around asterisks (#46231)\r\n- @heimoshuiyu:\r\n  - feat(console): add quota reset support action (#47313)\r\n"
-      },
-      {
-        "tag": "v1.18.27",
-        "name": "v1.18.27",
-        "published_at": "2026-09-02T21:41:01Z",
-        "body": "## Core\n\n### Bugfixes\n\n- Default provider header timeouts to five minutes so slow model startups fail less often.\n- Default streamed chunk timeouts to five minutes, with `false` supported to disable them.\n- Let Anthropic `thinking.blockBinding` opt out via config when you need to keep the provider default. (@dkindlund)\n- Limit Anthropic thinking block binding to Claude 5.1+ models so older deployments do not reject requests.\n- Avoid unhandled errors when canceling timed-out SSE reads. (@AlexanderWillner)\n\n**Thank you to 2 community contributors:**\n- @AlexanderWillner:\n  - fix(provider): handle SSE reader cancel rejections (#44944)\n- @dkindlund:\n  - fix(opencode): let config opt out of Anthropic thinking blockBinding (#46820)\n"
       }
     ]
   },
