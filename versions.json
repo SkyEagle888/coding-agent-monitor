@@ -58,6 +58,12 @@
   "opencode": {
     "versions": [
       {
+        "tag": "v1.19.0",
+        "name": "v1.19.0",
+        "published_at": "2026-10-11T01:39:22Z",
+        "body": "## Core\n\n### Improvements\n- Run `opencode upgrade --major` to upgrade to OpenCode 2.\n\n### Bugfixes\n- Allow the OpenAI `ultrafast` service tier.\n- Validate PTY connection origins and tickets before checking whether a PTY exists.\n\n## TUI\n\n### Improvements\n- Use `/update` to install OpenCode updates or upgrade to OpenCode 2; updates are no longer installed automatically.\n\n**Thank you to 1 community contributor:**\n- @dc85:\n  - docs(web): add Exo Free to Zen docs (#53622)\n  - fix(stats): attribute exo usage to an unknown provider (#53621)\n  - docs(web): remove Fledge Alpha Free from Zen docs (#53984)\n"
+      },
+      {
         "tag": "v1.18.35",
         "name": "v1.18.35",
         "published_at": "2026-10-06T20:18:39Z",
@@ -80,12 +86,6 @@
         "name": "v1.18.32",
         "published_at": "2026-09-21T22:51:20Z",
         "body": "## Core\n\n### Bugfixes\n\n- Fixed Bedrock image attachments so they are only hoisted for Claude, Nova, and Llama 4 models.\n- Fixed Together AI streaming usage reporting.\n\n**Thank you to 1 community contributor:**\n- @dc85:\n  - docs: add DeepSeek V4.1 Flash to Zen (#49897)\n  - feat: add Grok 4.7 to Zen and Go (#50288)\n"
-      },
-      {
-        "tag": "v1.18.31",
-        "name": "v1.18.31",
-        "published_at": "2026-09-14T17:47:30Z",
-        "body": "## Core\n\n### Bugfixes\n\n- Restored ACP session model, effort, mode, and reasoning chunk boundaries when loading, resuming, or forking sessions. (@JacobNWolf)\n\n## TUI\n\n### Bugfixes\n\n- Show remote config authentication errors during startup and exit with a failure status.\n\n## Extensions\n\n### Improvements\n\n- Request summarized adaptive thinking for GitHub Copilot models.\n\n**Thank you to 4 community contributors:**\n- @heimoshuiyu:\n  - feat(console): add batch workspace block endpoints (#48491)\n- @JacobNWolf:\n  - fix(acp): restore session options and reasoning boundaries (#48225)\n- @R-Taneja:\n  - chore(deps): bump @ai-sdk/gateway to 3.0.191 (#48710)\n- @MatthewFeroz:\n  - fix(ui): add Merge Gateway logo (#42015)\n"
       }
     ]
   },
