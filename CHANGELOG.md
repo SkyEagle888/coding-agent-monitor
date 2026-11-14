@@ -2,6 +2,7 @@
 
 | Date | Tool | Change | Details |
 |------|------|--------|--------|
+| 2026-11-14 | oh-my-opencode | `v5.1.69` → `v5.1.70` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-11-13 | qwen-code | `sdk-typescript-v0.1.32` → `sdk-typescript-v0.1.33` | [Release](https://github.com/search?q=qwen-code+releases) |
 | 2026-11-11 | oh-my-opencode | `v5.1.66` → `v5.1.69` | [Release](https://github.com/search?q=oh-my-opencode+releases) |
 | 2026-11-10 | qwen-code | `sdk-typescript-v0.1.31` → `sdk-typescript-v0.1.32` | [Release](https://github.com/search?q=qwen-code+releases) |
